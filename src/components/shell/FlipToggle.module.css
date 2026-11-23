@@ -1,0 +1,87 @@
+/* CAKA-CMS Theme segment pattern: whole control flips on click. */
+.root {
+  appearance: none;
+  position: relative;
+  display: flex;
+  flex: none;
+  min-inline-size: 7.5rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+  color: var(--color-ink-soft);
+  font: 500 13px/18px var(--font-sans);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root:focus {
+  outline: none;
+}
+
+.root:focus-visible {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+.faces {
+  display: flex;
+  flex: 1 1 auto;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.faces > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 1 0 0;
+  place-items: center;
+  min-inline-size: 0;
+  min-block-size: 32px;
+  padding: 0 10px;
+  pointer-events: none;
+}
+
+.thumb {
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 50%;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  pointer-events: none;
+  transform: translateX(calc(var(--index, 0) * 100%));
+}
+
+.thumb > .faces {
+  display: flex;
+  block-size: 100%;
+  inline-size: 200%;
+  transform: translateX(calc(var(--index, 0) * -50%));
+}
+
+.root[data-index="0"] {
+  --index: 0;
+}
+
+.root[data-index="1"] {
+  --index: 1;
+}
+
+.root[data-live] .thumb,
+.root[data-live] .thumb > .faces {
+  transition: transform 280ms var(--ease-out, ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root[data-live] .thumb,
+  .root[data-live] .thumb > .faces {
+    transition: none;
+  }
+}

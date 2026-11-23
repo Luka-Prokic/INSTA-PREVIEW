@@ -1,0 +1,38 @@
+.root {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-surface-sunken);
+  color: var(--color-fg-subtle);
+  user-select: none;
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.sized {
+  max-inline-size: 100%;
+}
+
+.mark {
+  max-inline-size: min(72%, 12rem);
+  font-family: var(--font-display);
+  font-size: clamp(0.625rem, 8cqi, 1.125rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tighter);
+  line-height: 1;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@supports not (font-size: 1cqi) {
+  .mark {
+    font-size: clamp(0.625rem, 4vw, 1.125rem);
+  }
+}

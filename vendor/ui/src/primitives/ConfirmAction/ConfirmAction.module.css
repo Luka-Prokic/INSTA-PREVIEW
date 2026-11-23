@@ -1,0 +1,19 @@
+.button[data-chrome="text"] {
+  min-height: var(--tap-target-min);
+  padding-inline: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide, 0.06em);
+  text-transform: uppercase;
+}
+
+.button[data-chrome="icon"] {
+  width: var(--tap-target-min);
+  min-width: var(--tap-target-min);
+  min-height: var(--tap-target-min);
+  padding: 0;
+}
+
+.button[data-armed][data-chrome="text"] {
+  font-weight: var(--font-weight-bold);
+}

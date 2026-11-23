@@ -1,0 +1,43 @@
+.notice {
+  position: fixed;
+  inset-block-start: var(--space-4);
+  inset-inline-end: var(--space-4);
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-inline-size: min(24rem, calc(100vw - var(--space-6)));
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font: var(--type-secondary);
+  animation: notice-blur-in 280ms var(--ease-out, ease-out) both;
+}
+
+@keyframes notice-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.notice button {
+  color: inherit;
+  border-block-end: 1px solid currentColor;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 720px) {
+  .notice {
+    inset-block-start: calc(var(--admin-bar, 0px) + var(--space-3));
+    inset-inline: var(--space-3);
+    max-inline-size: none;
+  }
+}

@@ -1,0 +1,308 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-9);
+  inline-size: 100%;
+  max-inline-size: 46rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sectionTitle {
+  margin-block-end: calc(var(--space-2) * -1);
+  font: var(--type-primary);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-4);
+}
+
+.hours {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.field > button,
+.stack > button,
+.row > button {
+  align-self: start;
+  border: 0;
+  background: none;
+  min-block-size: 44px;
+  padding: 0;
+  font: var(--type-primary);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.row > button {
+  align-self: center;
+  color: var(--color-ink-soft);
+  font: var(--type-secondary);
+}
+
+.field label,
+.legend {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-ink-soft);
+}
+
+.field input:not([type="file"]),
+.row input:not([type="file"]),
+.field textarea,
+.hours input,
+.select {
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  min-block-size: 44px;
+  padding: 12px 16px;
+  font: var(--type-secondary);
+  background: var(--color-field);
+  color: var(--color-ink);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.form[data-invalid] .field input:not([type="file"]),
+.form[data-invalid] .row input:not([type="file"]),
+.form[data-invalid] .field textarea,
+.form[data-invalid] .select {
+  animation: admin-shake 320ms var(--ease-out);
+}
+
+.field textarea {
+  min-block-size: 8rem;
+  resize: vertical;
+}
+
+.field input:focus,
+.row input:focus,
+.field textarea:focus,
+.hours input:focus,
+.select:focus,
+.private textarea:focus {
+  border-color: var(--color-ink);
+}
+
+.field input:focus:not(:focus-visible),
+.row input:focus:not(:focus-visible),
+.field textarea:focus:not(:focus-visible),
+.hours input:focus:not(:focus-visible),
+.select:focus:not(:focus-visible),
+.private textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.hint {
+  font: var(--type-secondary);
+  color: var(--color-ink-faint);
+}
+
+.error {
+  font: var(--type-secondary);
+  color: var(--color-error);
+  animation: admin-shake 320ms var(--ease-out);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.primary,
+.secondary {
+  border: 0;
+  background: none;
+  min-block-size: 44px;
+  padding: 0 2px;
+  font: var(--admin-row-type);
+  letter-spacing: var(--admin-row-tracking);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--admin-blue);
+}
+
+.secondary {
+  color: var(--color-ink-soft);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.preview {
+  font: var(--type-primary);
+  border-block-end: var(--hairline);
+}
+
+.notice {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(var(--color-ink-rgb), 0.05);
+  font: var(--type-secondary);
+  color: var(--color-ink-soft);
+  animation: admin-settle 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.private {
+  border: var(--hairline);
+  border-radius: var(--admin-card-radius);
+  background: var(--admin-card-fill);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.private textarea {
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  min-block-size: 88px;
+  padding: 12px 16px;
+  font: var(--type-secondary);
+  background: var(--color-field);
+  color: var(--color-ink);
+}
+
+.privateTitle {
+  font: var(--type-primary);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink);
+}
+
+@media (max-width: 720px) {
+  .row,
+  .hours {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    align-items: stretch;
+  }
+
+  .primary,
+  .secondary {
+    flex: 1 1 auto;
+  }
+}
+
+.inquiry {
+  max-inline-size: var(--admin-card-max);
+}
+
+.inquiryLetter {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: var(--hairline);
+  border-radius: var(--admin-card-radius);
+  background: var(--admin-card-fill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.inquiryWho {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-block-end: 16px;
+  padding-block-end: 16px;
+  border-block-end: var(--hairline);
+}
+
+.inquiryEmail {
+  color: var(--color-ink-soft);
+  font: 400 15px/20px var(--font-sans);
+  text-decoration: none;
+}
+
+.inquiryFacts {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  font: var(--admin-section-type);
+}
+
+.inquiryMessage {
+  margin: 0;
+  color: var(--color-ink);
+  font: var(--admin-row-type);
+  letter-spacing: var(--admin-row-tracking);
+  line-height: 26px;
+  white-space: pre-wrap;
+}
+
+.inquiryLinks {
+  margin: 16px 0 0;
+  color: var(--color-ink-faint);
+  font: var(--type-secondary);
+  white-space: pre-wrap;
+}
+
+.inquiryBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inquiryBlock h2 {
+  margin: 0;
+  padding-inline: 4px;
+  font: var(--admin-section-type);
+  letter-spacing: -0.008em;
+  color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+}
+
+.inquiryBlock textarea {
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  min-block-size: 8rem;
+  padding: 16px;
+  font: var(--type-secondary);
+  line-height: 22px;
+  background: var(--color-field);
+  color: var(--color-ink);
+  resize: vertical;
+}
+
+.inquiryBlock textarea:focus {
+  border-color: var(--color-ink);
+}
+
+.inquiryBlock textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (min-width: 721px) {
+  .inquiryEmail:hover {
+    color: var(--color-ink);
+  }
+}

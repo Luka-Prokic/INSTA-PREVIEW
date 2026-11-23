@@ -1,0 +1,262 @@
+.layers {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+  min-height: 0;
+  padding: 16px 0 24px;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 12px 0 16px;
+}
+
+.brandTitle {
+  margin: 0;
+  font: 400 28px/1 var(--font-bartle), var(--font-display), var(--font-sans);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-ink);
+}
+
+.scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 12px 28px;
+  /* Room for card tilt / swipe glow without hard clip at the edges. */
+  scrollbar-gutter: stable;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+}
+
+.block:not([data-static]) .sectionHeader {
+  cursor: pointer;
+}
+
+.block[data-static] .sectionHeader {
+  cursor: default;
+}
+
+.sectionHeader > :global(.sectionTitle),
+.sectionHeader > span:first-child {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.sectionAction {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-inline-start: -2px;
+}
+
+.sectionSummary {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-inline-start: auto;
+  margin-inline-end: 4px;
+  font: var(--admin-row-type);
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+  text-align: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.block:not([data-static]) .sectionSummary {
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(4px);
+  pointer-events: none;
+}
+
+.block:not([data-static])[data-collapsed] .sectionSummary {
+  max-width: 14rem;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.block[data-static] .sectionSummary {
+  max-width: none;
+  opacity: 1;
+  transform: none;
+  pointer-events: none;
+}
+
+.block[data-ready]:not([data-static]) .sectionSummary {
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    max-width var(--duration-base) var(--ease-out);
+}
+
+.sectionChevron {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  margin-inline-start: auto;
+  margin-inline-end: 4px;
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  transform: rotate(-90deg);
+}
+
+.sectionHeader:has(.sectionSummary) .sectionChevron {
+  margin-inline-start: 0;
+}
+
+.block[data-ready] .sectionChevron {
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.sectionChevron[data-open] {
+  transform: rotate(0deg);
+}
+
+.sectionChevron :global(.adminIcon) {
+  width: 16px;
+  height: 16px;
+}
+
+.block:not([data-static]) .sectionHeader:hover .sectionChevron {
+  color: var(--color-ink);
+  background: var(--color-surface-hover);
+}
+
+.sectionCollapse {
+  display: grid;
+  grid-template-rows: 0fr;
+}
+
+.sectionCollapse[data-open] {
+  grid-template-rows: 1fr;
+}
+
+.block[data-ready] .sectionCollapse {
+  transition: grid-template-rows var(--duration-base) var(--ease-out);
+}
+
+.sectionClip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block-start: 10px;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.sectionCollapse[data-open] .sectionBody {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.block[data-ready] .sectionBody {
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block[data-ready] .sectionCollapse,
+  .block[data-ready] .sectionBody,
+  .block[data-ready] .sectionSummary,
+  .block[data-ready] .sectionChevron {
+    transition: none;
+  }
+}
+
+.rail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-6px);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.phoneDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
+  flex-shrink: 0;
+}
+
+.phoneDot[data-active] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+
+.block[data-disabled] {
+  opacity: 0.55;
+}
+
+.layers[data-rail="true"] .inner {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-8px);
+  overflow: hidden;
+}
+
+.layers[data-rail="true"] .rail {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}

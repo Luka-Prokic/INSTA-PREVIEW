@@ -1,0 +1,24 @@
+.fill {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fade {
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--easing-out);
+}
+
+.loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade {
+    opacity: 1;
+    transition: none;
+  }
+}

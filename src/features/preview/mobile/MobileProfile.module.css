@@ -1,0 +1,438 @@
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 20px 24px;
+  overflow: auto;
+}
+
+.stage[data-scale="actual"] {
+  align-items: flex-start;
+  justify-content: safe center;
+  padding: 24px;
+}
+
+.slideStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.slideStage[data-scale="actual"] {
+  width: auto;
+  height: auto;
+}
+
+/* Frameless phone-width profile filling the carousel slot */
+.bareStage {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--ig-bg, #fff);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
+.bareScreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--ig-bg);
+  color: var(--ig-fg);
+  font-family: var(--ig-font);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.scaleSlot {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: min-content;
+  min-height: min-content;
+}
+
+.phone {
+  position: relative;
+  flex: 0 0 auto;
+  padding: var(--phone-forehead) var(--phone-bezel) var(--phone-chin);
+  border-radius: var(--phone-body-radius);
+  background:
+    linear-gradient(160deg, #4a4a4c 0%, #1c1c1e 32%, #0c0c0e 72%, #2e2e30 100%);
+  box-shadow:
+    0 0 0 1px #0a0a0a,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  transform-origin: center center;
+  box-sizing: border-box;
+}
+
+/*
+ * iPhone SE — black glass face + thin aluminum rim (not a titanium slab forehead).
+ * Matches 8 / SE (2nd/3rd) front: solid black bezel, home button in the chin.
+ */
+.phone[data-face="home"] {
+  background: #0b0b0c;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 0 1px #2c2c2e,
+    0 0 0 2.5px #8e8e93,
+    0 0 0 3.5px #3a3a3c;
+}
+
+.seSensors {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--phone-forehead);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.earpiece {
+  width: 58px;
+  height: 7px;
+  border-radius: 4px;
+  background: #1c1c1e;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.65),
+    inset 0 -0.5px 0 rgba(255, 255, 255, 0.08);
+}
+
+.frontCamera {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #1a2740 0%, #0a1020 55%, #000 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Hardware buttons — titanium side rails */
+.btnSilent,
+.btnVolumeUp,
+.btnVolumeDown,
+.btnPower {
+  position: absolute;
+  z-index: 2;
+  background: linear-gradient(90deg, #3a3a3c, #1f1f21 40%, #2c2c2e);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.btnSilent {
+  left: -2px;
+  top: var(--btn-silent-top);
+  width: 3px;
+  height: 28px;
+  border-radius: 2px 0 0 2px;
+}
+
+.btnVolumeUp {
+  left: -2px;
+  top: var(--btn-volume-up-top);
+  width: 3px;
+  height: 52px;
+  border-radius: 2px 0 0 2px;
+}
+
+.btnVolumeDown {
+  left: -2px;
+  top: var(--btn-volume-down-top);
+  width: 3px;
+  height: 52px;
+  border-radius: 2px 0 0 2px;
+}
+
+.btnPower {
+  right: -2px;
+  top: var(--btn-power-top);
+  width: 3px;
+  height: 82px;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(270deg, #3a3a3c, #1f1f21 40%, #2c2c2e);
+}
+
+.screen {
+  position: relative;
+  width: var(--phone-screen-w);
+  height: var(--phone-screen-h);
+  display: flex;
+  flex-direction: column;
+  background: var(--ig-bg);
+  color: var(--ig-fg);
+  font-family: var(--ig-font);
+  border-radius: var(--phone-screen-radius);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.dynamicIsland {
+  position: absolute;
+  top: var(--island-top);
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: var(--island-w);
+  height: var(--island-h);
+  padding-right: 12px;
+  border-radius: 24px;
+  background: #000;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.islandCamera {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #1a2a44 0%, #0a1020 45%, #000 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 5;
+  width: var(--notch-w);
+  height: var(--notch-h);
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.notch::before,
+.notch::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  background: transparent;
+}
+
+.notch::before {
+  left: -10px;
+  border-top-right-radius: 10px;
+  box-shadow: 5px 0 0 0 #000;
+}
+
+.notch::after {
+  right: -10px;
+  border-top-left-radius: 10px;
+  box-shadow: -5px 0 0 0 #000;
+}
+
+.homeButton {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--phone-chin) / 2 - 29px);
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #0b0b0c;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow:
+    0 0 0 2px #6e6e73,
+    0 0 0 3.5px #3a3a3e,
+    inset 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.homeButtonRing {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(circle at 42% 34%, #222226, #0e0e10 72%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.topBar {
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.username {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.topActions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-width: none;
+}
+
+.body::-webkit-scrollbar {
+  display: none;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 16px 12px;
+}
+
+.avatarRing {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  padding: 2px;
+  background: var(--ig-border);
+  box-sizing: border-box;
+}
+
+.avatarRing[data-story] {
+  padding: 3px;
+  background: var(--ig-story-ring);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ig-bg);
+  background: #efefef;
+}
+
+.meta {
+  padding: 0 16px 12px;
+}
+
+.displayName {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.category {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ig-secondary);
+}
+
+.bio {
+  margin: 4px 0 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.link {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ig-link);
+  text-decoration: none;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
+  gap: 8px;
+  padding: 8px 16px 4px;
+}
+
+.btn {
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ig-button);
+  color: var(--ig-button-fg);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.btnPrimary {
+  background: var(--ig-primary);
+  color: #fff;
+}
+
+.btnIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottomNav {
+  flex: 0 0 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid var(--ig-hairline);
+  background: var(--ig-bg);
+  padding-bottom: 4px;
+}
+
+.homeIndicator {
+  flex: 0 0 34px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  background: var(--ig-bg);
+}
+
+.homePill {
+  width: 134px;
+  height: 5px;
+  border-radius: 999px;
+  background: #000;
+}
+
+.navAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #000;
+}

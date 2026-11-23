@@ -1,0 +1,165 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-5);
+  border: 0;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+}
+
+.dialog[open] {
+  display: grid;
+  place-items: center;
+}
+
+.dialog[open][data-placement="bottom-start"] {
+  place-items: end start;
+}
+
+.dialog[open][data-placement="top"] {
+  place-items: start center;
+  padding-top: var(--space-8);
+}
+
+.dialog[open][data-placement="top-start"] {
+  place-items: start start;
+}
+
+.dialog[open][data-placement="top-end"] {
+  place-items: start end;
+}
+
+.dialog:not([open]) {
+  display: none !important;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-slow, 400ms) var(--easing-standard);
+}
+
+.dialog[data-entered] .overlay {
+  opacity: 1;
+}
+
+.dialog::backdrop {
+  background: var(--color-overlay);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  opacity: 0;
+  transition: opacity var(--duration-slow, 400ms) var(--easing-standard);
+}
+
+.dialog[data-entered]::backdrop {
+  opacity: 1;
+}
+
+.panel {
+  --modal-offscreen: calc(100% + var(--space-5) + var(--space-8));
+  position: relative;
+  z-index: 2;
+  width: min(calc(100vw - var(--space-8)), 32rem);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--space-8));
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transform: translate3d(0, var(--space-8), 0);
+  transition: transform var(--duration-slow, 400ms) var(--easing-emphasized, var(--easing-standard));
+}
+
+.dialog[data-entered] .panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.dialog[data-placement="top"] .panel,
+.dialog[data-placement="top-start"] .panel,
+.dialog[data-placement="top-end"] .panel {
+  transform: translate3d(0, calc(-1 * var(--modal-offscreen)), 0);
+}
+
+.dialog[data-placement="bottom-start"] .panel {
+  transform: translate3d(0, var(--modal-offscreen), 0);
+}
+
+.dialog[data-placement="top"][data-entered] .panel,
+.dialog[data-placement="top-start"][data-entered] .panel,
+.dialog[data-placement="top-end"][data-entered] .panel,
+.dialog[data-placement="bottom-start"][data-entered] .panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.dialog[data-size="sm"] .panel {
+  width: min(calc(100vw - var(--space-8)), 24rem);
+}
+
+.dialog[data-size="lg"] .panel {
+  width: min(calc(100vw - var(--space-8)), 42rem);
+}
+
+.dialog[data-size="full"] {
+  width: calc(100vw - var(--space-8));
+  max-width: calc(100vw - var(--space-8));
+}
+
+.dialog[data-size="full"] .panel {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  border-bottom: var(--border-width-thin) solid var(--color-hairline);
+}
+
+.body {
+  padding: var(--space-6);
+  overflow: auto;
+  min-height: 0;
+  color: var(--color-fg-muted);
+  line-height: 1.55;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6) var(--space-6);
+  border-top: var(--border-width-thin) solid var(--color-hairline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel,
+  .dialog::backdrop {
+    transition: none;
+  }
+
+  .dialog[open] .overlay,
+  .dialog[open] .panel {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .dialog[open]::backdrop {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,206 @@
+/**
+ * Scope Caka UI onto the collection preview root.
+ * Apple-like canvas + red accent + black secondary; glass / tech surfaces.
+ * Semantic light/dark remaps live here so theme never leaks across collections.
+ */
+[data-collection="caka-ui"] {
+  min-height: 100%;
+  --collection-canvas-bg: var(--color-bg);
+  --collection-fg: var(--color-fg);
+  /* iOS 26: pills on interactive controls; banners/media stay sharp. */
+  --radius-control: var(--radius-full);
+  --radius-surface: var(--radius-xl);
+  --radius-sheet: var(--radius-2xl);
+  --radius-banner: var(--radius-none);
+  --radius-media: var(--radius-none);
+  /*
+   * Spacing - rule of 4s only (px): 4, 8, 16, 24, 32, 48, 64, 96, 128, 256, 512.
+   * Prefer keys: 1, 2, 4, 6, 8, 12, 16, 24, 32, 64, 128.
+   * Off-scale keys (3, 5, 7, 10, 20) alias to the nearest on-scale step.
+   */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.5rem; /* alias → 8 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* alias → 24 */
+  --space-6: 1.5rem; /* 24 */
+  --space-7: 2rem; /* alias → 32 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 3rem; /* alias → 48 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+  --space-20: 6rem; /* alias → 96 */
+  --space-24: 6rem; /* 96 */
+  --space-32: 8rem; /* 128 */
+  --space-64: 16rem; /* 256 */
+  --space-128: 32rem; /* 512 */
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+}
+
+[data-collection="caka-ui"][data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: rgb(var(--palette-neutral-50));
+  --color-surface: rgb(var(--palette-neutral-0));
+  --color-surface-raised: rgb(var(--palette-neutral-0));
+  --color-surface-sunken: rgb(var(--palette-neutral-100));
+  --color-surface-glass: rgb(var(--palette-neutral-0) / 0.72);
+  --color-overlay: rgb(var(--palette-neutral-950) / 0.4);
+
+  --color-fg: rgb(var(--palette-neutral-900));
+  --color-fg-muted: rgb(var(--palette-neutral-600));
+  --color-fg-subtle: rgb(var(--palette-neutral-500));
+  --color-fg-on-accent: rgb(var(--palette-neutral-0));
+
+  --color-border: rgb(var(--palette-neutral-200));
+  --color-border-strong: rgb(var(--palette-neutral-300));
+  --color-hairline: rgb(var(--palette-neutral-950) / 0.1);
+
+  --color-hover: rgb(var(--palette-neutral-950) / 0.04);
+  --color-active: rgb(var(--palette-neutral-950) / 0.08);
+  --color-focus-ring: rgb(var(--palette-accent-500) / 0.45);
+
+  --color-primary: rgb(var(--palette-accent-500));
+  --color-primary-hover: rgb(var(--palette-accent-600));
+  --color-primary-active: rgb(var(--palette-accent-700));
+  --color-on-primary: rgb(var(--palette-neutral-0));
+
+  --color-secondary: rgb(var(--palette-neutral-950));
+  --color-secondary-hover: rgb(var(--palette-neutral-800));
+  --color-secondary-active: rgb(var(--palette-neutral-900));
+  --color-on-secondary: rgb(var(--palette-neutral-0));
+
+  --color-success: rgb(var(--palette-green-600));
+  --color-success-surface: rgb(var(--palette-green-500) / 0.12);
+  --color-success-border: rgb(var(--palette-green-500) / 0.4);
+
+  --color-warning: rgb(var(--palette-amber-600));
+  --color-warning-surface: rgb(var(--palette-amber-500) / 0.14);
+  --color-warning-border: rgb(var(--palette-amber-500) / 0.4);
+
+  --color-danger: rgb(var(--palette-red-600));
+  --color-danger-surface: rgb(var(--palette-red-500) / 0.12);
+  --color-danger-border: rgb(var(--palette-red-500) / 0.4);
+
+  --color-info: rgb(var(--palette-blue-600));
+  --color-info-surface: rgb(var(--palette-blue-500) / 0.12);
+  --color-info-border: rgb(var(--palette-blue-500) / 0.4);
+
+  --shadow-glass:
+    0 8px 32px rgb(var(--palette-neutral-950) / 0.08),
+    inset 0 0.5px 0 rgb(var(--palette-neutral-0) / 0.65);
+}
+
+[data-collection="caka-ui"][data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: rgb(var(--palette-neutral-950));
+  --color-surface: rgb(var(--palette-neutral-900));
+  --color-surface-raised: rgb(var(--palette-neutral-800));
+  --color-surface-sunken: rgb(var(--palette-neutral-950));
+  --color-surface-glass: rgb(var(--palette-neutral-800) / 0.62);
+  --color-overlay: rgb(var(--palette-neutral-1000) / 0.65);
+
+  --color-fg: rgb(var(--palette-neutral-50));
+  --color-fg-muted: rgb(var(--palette-neutral-400));
+  --color-fg-subtle: rgb(var(--palette-neutral-500));
+  --color-fg-on-accent: rgb(var(--palette-neutral-0));
+
+  --color-border: rgb(var(--palette-neutral-800));
+  --color-border-strong: rgb(var(--palette-neutral-700));
+  --color-hairline: rgb(var(--palette-neutral-0) / 0.14);
+
+  --color-hover: rgb(var(--palette-neutral-0) / 0.06);
+  --color-active: rgb(var(--palette-neutral-0) / 0.12);
+  --color-focus-ring: rgb(var(--palette-accent-500) / 0.55);
+
+  --color-primary: rgb(var(--palette-accent-500));
+  --color-primary-hover: rgb(var(--palette-accent-600));
+  --color-primary-active: rgb(var(--palette-accent-700));
+  --color-on-primary: rgb(var(--palette-neutral-0));
+
+  --color-secondary: rgb(var(--palette-neutral-50));
+  --color-secondary-hover: rgb(var(--palette-neutral-200));
+  --color-secondary-active: rgb(var(--palette-neutral-100));
+  --color-on-secondary: rgb(var(--palette-neutral-950));
+
+  --color-success: rgb(var(--palette-green-500));
+  --color-success-surface: rgb(var(--palette-green-500) / 0.16);
+  --color-success-border: rgb(var(--palette-green-500) / 0.45);
+
+  --color-warning: rgb(var(--palette-amber-500));
+  --color-warning-surface: rgb(var(--palette-amber-500) / 0.18);
+  --color-warning-border: rgb(var(--palette-amber-500) / 0.45);
+
+  --color-danger: rgb(var(--palette-red-500));
+  --color-danger-surface: rgb(var(--palette-red-500) / 0.18);
+  --color-danger-border: rgb(var(--palette-red-500) / 0.45);
+
+  --color-info: rgb(var(--palette-blue-500));
+  --color-info-surface: rgb(var(--palette-blue-500) / 0.18);
+  --color-info-border: rgb(var(--palette-blue-500) / 0.45);
+
+  --shadow-glass:
+    0 8px 32px rgb(var(--palette-neutral-1000) / 0.45),
+    inset 0 0.5px 0 rgb(var(--palette-neutral-0) / 0.08);
+}
+
+/* Glass sheet - soft continuous panel (not a banner/media block). */
+[data-collection="caka-ui"] .caka-glass {
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  -webkit-backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  box-shadow: var(--shadow-glass);
+  border: var(--border-width-thin) solid var(--color-hairline);
+  border-radius: var(--radius-sheet, var(--radius-2xl));
+}
+
+/* Compact pill chip / tag recipe (interactive). */
+[data-collection="caka-ui"] .caka-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-control, var(--radius-full));
+  background: var(--color-surface-glass);
+  border: var(--border-width-thin) solid var(--color-hairline);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Sharp banner / media frame (hero strips, large image cards). */
+[data-collection="caka-ui"] .caka-banner,
+[data-collection="caka-ui"] .caka-media {
+  border-radius: var(--radius-banner, 0);
+  overflow: hidden;
+}
+
+/*
+ * Prevent iOS zoom-on-focus for text entry (also when consumers skip tokens reset).
+ */
+[data-collection="caka-ui"]
+  :is(
+    input:not(
+      [type="button"],
+      [type="submit"],
+      [type="reset"],
+      [type="checkbox"],
+      [type="radio"],
+      [type="range"],
+      [type="file"],
+      [type="image"],
+      [type="color"],
+      [type="hidden"]
+    ),
+    textarea,
+    select
+  ) {
+  font-size: max(16px, 1em);
+}

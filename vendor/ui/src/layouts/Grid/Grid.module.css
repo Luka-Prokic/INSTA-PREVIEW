@@ -1,0 +1,9 @@
+.grid {
+  display: grid;
+  gap: var(--grid-gap, 0);
+  grid-template-columns: var(--grid-cols, none);
+}
+
+.inline {
+  display: inline-grid;
+}

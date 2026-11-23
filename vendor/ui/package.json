@@ -1,0 +1,22 @@
+{
+  "name": "@luka-prokic/ui",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Vendored Caka UI components used by CAKA TOOL.",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./foundations/collection.css": "./src/foundations/collection.css"
+  },
+  "dependencies": {
+    "@luka-prokic/tokens": "file:../tokens"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  }
+}

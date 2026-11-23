@@ -1,0 +1,18 @@
+{
+  "name": "@luka-prokic/tokens",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Vendored Caka UI design tokens for CAKA TOOL.",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./css": "./src/css/index.css",
+    "./css/tokens.css": "./src/css/tokens.css",
+    "./css/reset.css": "./src/css/reset.css",
+    "./css/typography.css": "./src/css/typography.css"
+  }
+}

@@ -1,0 +1,70 @@
+.grid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(var(--gallery-cols-phone), 1fr);
+  gap: var(--gallery-grid-gap);
+}
+
+@media (min-width: 40rem) {
+  .grid {
+    grid-template-columns: repeat(var(--gallery-cols-tablet), 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns: repeat(var(--gallery-cols-desktop), 1fr);
+  }
+}
+
+.tile {
+  aspect-ratio: 1;
+  background: var(--color-surface-sunken);
+  animation: gPulse 1.6s var(--easing-in-out) infinite;
+}
+
+.tile:nth-child(9n + 1) {
+  animation-delay: 0ms;
+}
+.tile:nth-child(9n + 2) {
+  animation-delay: 60ms;
+}
+.tile:nth-child(9n + 3) {
+  animation-delay: 120ms;
+}
+.tile:nth-child(9n + 4) {
+  animation-delay: 180ms;
+}
+.tile:nth-child(9n + 5) {
+  animation-delay: 240ms;
+}
+.tile:nth-child(9n + 6) {
+  animation-delay: 300ms;
+}
+.tile:nth-child(9n + 7) {
+  animation-delay: 360ms;
+}
+.tile:nth-child(9n + 8) {
+  animation-delay: 420ms;
+}
+.tile:nth-child(9n + 9) {
+  animation-delay: 480ms;
+}
+
+@keyframes gPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    animation: none;
+    opacity: 0.7;
+  }
+}

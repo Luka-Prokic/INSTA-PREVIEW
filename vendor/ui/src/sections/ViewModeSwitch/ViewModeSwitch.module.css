@@ -1,0 +1,51 @@
+.switch {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.switchMobile {
+  display: contents;
+}
+
+.option {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-fg-muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.option[aria-pressed="true"] {
+  color: var(--color-primary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    color: var(--color-fg);
+  }
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.mobileAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--tap-target-min);
+  text-align: center;
+}

@@ -1,0 +1,136 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+  min-height: var(--tap-target-min);
+  padding-block: var(--space-1);
+  user-select: none;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.box {
+  position: relative;
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.15rem;
+  border: var(--border-width-thick) solid var(--color-secondary);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition:
+    background-color var(--duration-fast) var(--easing-emphasized, var(--easing-standard)),
+    border-color var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard),
+    transform var(--duration-instant) var(--easing-standard);
+}
+
+.box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-on-secondary);
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--duration-fast) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-emphasized, var(--easing-standard));
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 4.5'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.input:checked + .box {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  transform: scale(1.04);
+}
+
+.input:checked + .box::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.input:focus-visible + .box {
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .label:hover .box {
+    border-color: var(--color-secondary-hover);
+  }
+
+  .label:hover .input:checked + .box {
+    background-color: var(--color-secondary-hover);
+    border-color: var(--color-secondary-hover);
+  }
+}
+
+.label:active .box {
+  transform: scale(0.94);
+}
+
+.root[data-invalid="true"] .box {
+  border-color: var(--color-danger);
+}
+
+.root[data-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.text {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-fg);
+  line-height: 1.4;
+  letter-spacing: var(--letter-spacing-tight, -0.01em);
+}
+
+.description {
+  margin-inline-start: calc(1.35rem + var(--space-3));
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-muted);
+  line-height: 1.5;
+}
+
+.error {
+  margin-inline-start: calc(1.35rem + var(--space-3));
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .box::after {
+    transition: none;
+  }
+
+  .input:checked + .box,
+  .label:active .box {
+    transform: none;
+  }
+
+  .box::after {
+    transform: none;
+  }
+}

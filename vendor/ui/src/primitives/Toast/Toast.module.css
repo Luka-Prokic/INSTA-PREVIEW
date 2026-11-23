@@ -1,0 +1,120 @@
+.viewport {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4) var(--space-4);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-glass);
+  border: var(--border-width-thin) solid var(--color-hairline);
+  backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  -webkit-backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  box-shadow: var(--shadow-glass, var(--shadow-lg));
+  color: var(--color-fg);
+  animation: caka-toast-in var(--duration-base) var(--easing-emphasized, var(--easing-standard));
+}
+
+.toast[data-tone="success"] {
+  border-color: var(--color-success-border);
+  border-inline-start: 3px solid var(--color-success);
+}
+
+.toast[data-tone="danger"] {
+  border-color: var(--color-danger-border);
+  border-inline-start: 3px solid var(--color-danger);
+}
+
+.toast[data-tone="warning"] {
+  border-color: var(--color-warning-border);
+  border-inline-start: 3px solid var(--color-warning);
+}
+
+.toast[data-tone="info"] {
+  border-color: var(--color-info-border);
+  border-inline-start: 3px solid var(--color-info);
+}
+
+.copy {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.title {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--letter-spacing-tight, -0.01em);
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-muted);
+  margin-top: var(--space-1);
+  line-height: 1.45;
+}
+
+.close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--color-fg-muted);
+  border-radius: var(--radius-full);
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .close:hover {
+    color: var(--color-fg);
+    background: var(--color-hover);
+  }
+}
+
+.demo {
+  appearance: none;
+  border: 0;
+  border-radius: var(--radius-control, var(--radius-full));
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
+@keyframes caka-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

@@ -1,0 +1,19 @@
+.divider {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-top: var(--border-width-thin, 1px) solid var(--color-border);
+}
+
+.divider[data-spacing="none"] {
+  margin-block: 0;
+}
+
+.divider[data-spacing="sm"] {
+  margin-block: var(--space-2);
+}
+
+.divider[data-spacing="md"] {
+  margin-block: var(--space-4);
+}

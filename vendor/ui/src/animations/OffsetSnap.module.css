@@ -1,0 +1,30 @@
+.root {
+  opacity: 0;
+  transform: translate3d(var(--snap-x, 0.35rem), var(--snap-y, 0.15rem), 0);
+  filter: contrast(1.15) saturate(0.85);
+  transition:
+    opacity var(--duration-fast) var(--easing-standard),
+    transform var(--duration-base) var(--easing-emphasized, var(--easing-standard)),
+    filter var(--duration-base) var(--easing-standard);
+  will-change: transform, opacity, filter;
+}
+
+.root[data-phase="offset"] {
+  opacity: 1;
+  transform: translate3d(var(--snap-x, 0.35rem), var(--snap-y, 0.15rem), 0);
+}
+
+.root[data-phase="snap"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

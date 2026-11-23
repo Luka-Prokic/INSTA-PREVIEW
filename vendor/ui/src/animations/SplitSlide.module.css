@@ -1,0 +1,49 @@
+.track {
+  position: relative;
+  width: 100%;
+}
+
+.sticky {
+  position: sticky;
+  top: 12vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-muted);
+}
+
+.root {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+@media (min-width: 769px) {
+  .root {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pane {
+  min-inline-size: 0;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pane {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .hint {
+    display: none;
+  }
+}

@@ -1,0 +1,32 @@
+.surface {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.surfaceZoomed {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+
+.surfaceZoomed:active {
+  cursor: grabbing;
+}
+
+.image {
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  object-fit: contain;
+  transform: translate3d(var(--preview-tx, 0px), var(--preview-ty, 0px), 0)
+    scale(var(--preview-scale, 1));
+  transform-origin: center center;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+}

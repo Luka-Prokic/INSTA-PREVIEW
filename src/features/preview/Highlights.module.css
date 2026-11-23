@@ -1,0 +1,58 @@
+.row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  width: 76px;
+}
+
+.ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 2px;
+  border: 1px solid var(--ig-border, #dbdbdb);
+  background: var(--ig-bg, #fff);
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ig-bg, #fff);
+  background: #efefef;
+}
+
+.title {
+  margin: 0;
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desktop .item {
+  width: 87px;
+}
+
+.desktop .ring {
+  width: 77px;
+  height: 77px;
+}

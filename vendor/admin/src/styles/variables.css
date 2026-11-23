@@ -1,0 +1,173 @@
+:root {
+  /*
+   * Color palette — no pure black (#000) or pure white (#fff) as defaults.
+   * Use --color-paper-accent only for deliberate highlights (pins, scrims).
+   */
+  --color-paper-rgb: 240, 238, 234;
+  --color-paper: #f0eeea;
+  --color-paper-accent: #ffffff;
+
+  --color-ink-rgb: 17, 17, 17;
+  --color-ink: #111111;
+  --color-ink-soft: #5c5c5c;
+  --color-ink-faint: #888888;
+  --color-accent: #ff0000;
+
+  --color-hairline: rgba(var(--color-ink-rgb), 0.12);
+  --color-surface-hover: rgba(var(--color-ink-rgb), 0.04);
+  /* A step off the paper: dimmer on a light page, lighter on a dark one. */
+  --color-field: rgba(var(--color-ink-rgb), 0.07);
+  --color-field-line: rgba(var(--color-ink-rgb), 0.18);
+  --color-error: #b3261e;
+
+  /* Instagram caption suggestion chips (admin work form) */
+  --color-suggestion-ink-rgb: 74, 58, 18;
+  --color-suggestion-ink: rgb(var(--color-suggestion-ink-rgb));
+  --color-suggestion-bg: rgba(196, 148, 42, 0.14);
+  --color-suggestion-border: rgba(196, 148, 42, 0.38);
+
+  /* SF Pro for UI text. BBH Bartle (--font-bartle, set on <html>) is the brand mark only. */
+  --font-sans: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-bartle), var(--font-sans);
+
+  /* CAKA roles. Line heights sit on the 4px grid. */
+  --type-title: 500 30px/32px var(--font-sans);
+  --type-primary: 500 15px/20px var(--font-sans);
+  --type-secondary: 400 13px/20px var(--font-sans);
+  --type-label: 500 12px/16px var(--font-sans);
+
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 15px;
+  --text-lg: 30px;
+  --text-xl: 30px;
+  --text-display: 30px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 500;
+
+  --leading-tight: 1.067;
+  --leading-base: 1.333;
+  --leading-relaxed: 1.538;
+
+  --tracking-tight: -0.015em;
+  --tracking-wide: 0.04em;
+  --tracking-caps: 0.04em;
+
+  /* 4-point spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* Layout */
+  --header-height: 3.5rem;
+  /*
+   * Stable viewport for full-bleed scroll-snap slides. 100svh ignores dynamic
+   * mobile browser chrome; JS may override with a px lock on exhibition pages.
+   */
+  --viewport-stable-height: 100svh;
+  --exhibition-slide-height: calc(
+    var(--viewport-stable-height) - var(--header-height)
+  );
+  --exhibition-slide-height-mobile: calc(
+    var(--viewport-stable-height) - var(--header-height) -
+      var(--mobile-toolbar-height)
+  );
+  --header-underline-offset: 0.4em;
+  --content-max: 90rem;
+  --grid-gap: 1px;
+  --detail-panel-top: calc(var(--header-height) + var(--space-6));
+  --detail-panel-height: calc(100dvh - var(--detail-panel-top) - var(--space-6));
+
+  /* Archive grid fallbacks — overridden inline when a density preset is active */
+  --grid-cols-phone: 3;
+  --grid-cols-tablet: 5;
+  --grid-cols-desktop: 9;
+
+  /* Borders */
+  --hairline: 1px solid var(--color-hairline);
+  --radius-none: 0;
+  --radius-sm: 2px;
+
+  /* Shadows — intentionally restrained */
+  --shadow-subtle: 0 1px 2px rgba(var(--color-ink-rgb), 0.06);
+  --shadow-raised: 0 4px 24px rgba(var(--color-ink-rgb), 0.08);
+
+  /* Z-index */
+  --z-base: 0;
+  --z-toolbar: 50;
+  --z-header: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 450ms;
+  --duration-page: 600ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-gallery: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-focus: cubic-bezier(0.32, 0, 0.12, 1);
+  --t-micro: 200ms;
+  --t-focus: 550ms;
+
+  /* Touch — minimum tap target helpers (see TextButton hit slop) */
+  --touch-target-min: 44px;
+  --touch-hit-expand: 8px;
+
+  /*
+   * Admin surfaces. Settings lists are the reference.
+   * See docs/admin-ui.md before adding a new admin screen.
+   */
+  --admin-card-radius: 10px;
+  --admin-card-fill: color-mix(in srgb, var(--color-paper-accent) 46%, transparent);
+  --admin-card-max: 680px;
+  --admin-row-type: 400 17px/22px var(--font-sans);
+  --admin-row-tracking: -0.024em;
+  --admin-section-type: 400 13px/18px var(--font-sans);
+  --admin-blue: #007aff;
+  --admin-red: #ff3b30;
+  --admin-green: #34c759;
+  --admin-chevron: #c7c7cc;
+}
+
+
+/*
+ * Premium dark — neutral charcoal, soft porcelain type, restrained contrast.
+ * Editorial / concept-store feel; no brown or gold cast.
+ */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-paper-rgb: 14, 14, 15;
+  --color-paper: rgb(var(--color-paper-rgb));
+  --color-paper-accent: #222224;
+
+  --color-ink-rgb: 236, 236, 234;
+  --color-ink: rgb(var(--color-ink-rgb));
+  --color-ink-soft: #a8a8a4;
+  --color-ink-faint: #6e6e6a;
+
+  --color-hairline: rgba(236, 236, 234, 0.1);
+  --color-surface-hover: rgba(236, 236, 234, 0.04);
+  --color-error: #e07a72;
+
+  --color-suggestion-ink-rgb: 220, 220, 216;
+  --color-suggestion-ink: rgb(var(--color-suggestion-ink-rgb));
+  --color-suggestion-bg: rgba(236, 236, 234, 0.06);
+  --color-suggestion-border: rgba(236, 236, 234, 0.14);
+
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-raised: 0 8px 32px rgba(0, 0, 0, 0.55);
+}

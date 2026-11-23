@@ -1,0 +1,36 @@
+.spinner {
+  display: inline-block;
+  border: 2px solid var(--color-hairline);
+  border-top-color: var(--color-secondary);
+  border-radius: var(--radius-full);
+  animation: caka-spin var(--duration-slower) linear infinite;
+  vertical-align: middle;
+}
+
+.spinner[data-size="sm"] {
+  width: 1rem;
+  height: 1rem;
+}
+
+.spinner[data-size="md"] {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.spinner[data-size="lg"] {
+  width: 2rem;
+  height: 2rem;
+  border-width: 2.5px;
+}
+
+@keyframes caka-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}

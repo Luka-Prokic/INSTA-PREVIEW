@@ -1,0 +1,194 @@
+.group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-block-end: var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide, 0.06em);
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.group[data-orientation="horizontal"] .options {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  width: fit-content;
+  max-width: 100%;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-control, var(--radius-full));
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  -webkit-backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  box-shadow: var(--shadow-xs);
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  min-height: var(--tap-target-min);
+  user-select: none;
+}
+
+.group[data-orientation="horizontal"] .option {
+  position: relative;
+  min-height: 2.35rem;
+  padding-inline: var(--space-4);
+  gap: 0;
+  border-radius: var(--radius-control, var(--radius-full));
+  transition:
+    color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.group[data-orientation="horizontal"] .option:has(svg) {
+  min-width: 2.35rem;
+  justify-content: center;
+  padding-inline: var(--space-3);
+}
+
+.group[data-orientation="horizontal"] .text:has(svg) {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.group[data-orientation="horizontal"] .dot {
+  display: none;
+}
+
+.group[data-orientation="horizontal"] .text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight, -0.01em);
+  color: var(--color-fg-muted);
+}
+
+.group[data-orientation="horizontal"] .input:checked ~ .text {
+  color: var(--color-on-secondary);
+  font-weight: var(--font-weight-bold);
+}
+
+.group[data-orientation="horizontal"] .option:has(.input:checked) {
+  background: var(--color-secondary);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group[data-orientation="horizontal"] .option:hover:not([data-disabled="true"]):not(
+      :has(.input:checked)
+    ) {
+    color: var(--color-fg);
+    background: var(--color-hover);
+  }
+
+  .group[data-orientation="horizontal"] .option:hover:not([data-disabled="true"]):not(
+      :has(.input:checked)
+    )
+    .text {
+    color: var(--color-fg);
+  }
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: var(--radius-full);
+  border: var(--border-width-thick) solid var(--color-secondary);
+  background: var(--color-surface);
+  position: relative;
+  flex-shrink: 0;
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    transform var(--duration-instant) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard);
+}
+
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: 50%;
+  width: 0;
+  height: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-secondary);
+  transform: translate(-50%, -50%);
+  transition:
+    width var(--duration-fast) var(--easing-emphasized, var(--easing-standard)),
+    height var(--duration-fast) var(--easing-emphasized, var(--easing-standard));
+}
+
+.input:checked + .dot::after {
+  width: 0.55rem;
+  height: 0.55rem;
+}
+
+.input:focus-visible + .dot {
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+.group[data-orientation="horizontal"] .input:focus-visible ~ .text {
+  outline: none;
+}
+
+.group[data-orientation="horizontal"] .option:has(.input:focus-visible) {
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:not([data-orientation="horizontal"]) .option:hover .dot {
+    border-color: var(--color-secondary-hover);
+  }
+}
+
+.option:active .dot {
+  transform: scale(0.94);
+}
+
+.option[data-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.text {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-fg);
+  letter-spacing: var(--letter-spacing-tight, -0.01em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .dot::after,
+  .group[data-orientation="horizontal"] .option {
+    transition: none;
+  }
+
+  .option:active .dot {
+    transform: none;
+  }
+}

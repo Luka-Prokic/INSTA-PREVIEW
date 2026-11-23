@@ -1,0 +1,461 @@
+/*
+ * NEXT-CAKA-UI - Design Tokens
+ *
+ * Two tiers:
+ *   1. Primitive palette (raw values, theme-agnostic scales).
+ *   2. Semantic roles (what components consume). Themes remap semantic roles.
+ *
+ * Components must only consume semantic tokens (--color-*, --space-*, etc.),
+ * never primitive palette steps directly. Themes are applied via
+ * [data-theme="light" | "dark"] on any ancestor (usually <html>).
+ *
+ * Caka identity: #F5F5F7 canvas, #FF0000 accent, black secondary, pill controls.
+ */
+
+:root {
+  /* ----------------------------------------------------------------------- */
+  /* Tier 1 - Primitive palette                                              */
+  /* ----------------------------------------------------------------------- */
+
+  /* Neutral ramp (rgb triplets enable alpha compositing via rgb(... / a)). */
+  --palette-neutral-0: 255 255 255;
+  --palette-neutral-50: 245 245 247; /* #F5F5F7 */
+  --palette-neutral-100: 232 232 237;
+  --palette-neutral-200: 210 210 215;
+  --palette-neutral-300: 174 174 178;
+  --palette-neutral-400: 142 142 147;
+  --palette-neutral-500: 99 99 102;
+  --palette-neutral-600: 72 72 74;
+  --palette-neutral-700: 58 58 60;
+  --palette-neutral-800: 44 44 46;
+  --palette-neutral-900: 29 29 31; /* #1D1D1F */
+  --palette-neutral-950: 0 0 0;
+  --palette-neutral-1000: 0 0 0;
+
+  --palette-accent-500: 255 0 0; /* #FF0000 */
+  --palette-accent-600: 230 0 0;
+  --palette-accent-700: 204 0 0;
+
+  --palette-blue-500: 0 122 255;
+  --palette-blue-600: 0 97 204;
+  --palette-green-500: 52 199 89;
+  --palette-green-600: 36 161 72;
+  --palette-amber-500: 255 159 10;
+  --palette-amber-600: 201 124 0;
+  --palette-red-500: 255 59 48;
+  --palette-red-600: 215 0 21;
+
+  /* ----------------------------------------------------------------------- */
+  /* Tier 2 - Semantic color roles (light is the default)                    */
+  /* ----------------------------------------------------------------------- */
+  color-scheme: light;
+
+  /* Surfaces & text */
+  --color-bg: rgb(var(--palette-neutral-50));
+  --color-surface: rgb(var(--palette-neutral-0));
+  --color-surface-raised: rgb(var(--palette-neutral-0));
+  --color-surface-sunken: rgb(var(--palette-neutral-100));
+  --color-surface-glass: rgb(var(--palette-neutral-0) / 0.72);
+  --color-overlay: rgb(var(--palette-neutral-950) / 0.4);
+
+  --color-fg: rgb(var(--palette-neutral-900));
+  --color-fg-muted: rgb(var(--palette-neutral-600));
+  --color-fg-subtle: rgb(var(--palette-neutral-500));
+  --color-fg-on-accent: rgb(var(--palette-neutral-0));
+
+  /* Borders & lines */
+  --color-border: rgb(var(--palette-neutral-200));
+  --color-border-strong: rgb(var(--palette-neutral-300));
+  --color-hairline: rgb(var(--palette-neutral-900) / 0.1);
+
+  /* Interaction overlays (compose over any surface) */
+  --color-hover: rgb(var(--palette-neutral-950) / 0.04);
+  --color-active: rgb(var(--palette-neutral-950) / 0.08);
+  --color-focus-ring: rgb(var(--palette-accent-500) / 0.45);
+
+  /* Primary action: bold red accent */
+  --color-primary: rgb(var(--palette-accent-500));
+  --color-primary-hover: rgb(var(--palette-accent-600));
+  --color-primary-active: rgb(var(--palette-accent-700));
+  --color-on-primary: rgb(var(--palette-neutral-0));
+
+  /* Secondary accent: black ink */
+  --color-secondary: rgb(var(--palette-neutral-950));
+  --color-secondary-hover: rgb(var(--palette-neutral-800));
+  --color-secondary-active: rgb(var(--palette-neutral-900));
+  --color-on-secondary: rgb(var(--palette-neutral-0));
+
+  /* Status - text-strength + surface + border for each hue */
+  --color-success: rgb(var(--palette-green-600));
+  --color-success-surface: rgb(var(--palette-green-500) / 0.12);
+  --color-success-border: rgb(var(--palette-green-500) / 0.4);
+
+  --color-warning: rgb(var(--palette-amber-600));
+  --color-warning-surface: rgb(var(--palette-amber-500) / 0.14);
+  --color-warning-border: rgb(var(--palette-amber-500) / 0.4);
+
+  --color-danger: rgb(var(--palette-red-600));
+  --color-danger-surface: rgb(var(--palette-red-500) / 0.12);
+  --color-danger-border: rgb(var(--palette-red-500) / 0.4);
+
+  --color-info: rgb(var(--palette-blue-600));
+  --color-info-surface: rgb(var(--palette-blue-500) / 0.12);
+  --color-info-border: rgb(var(--palette-blue-500) / 0.4);
+
+  /* ----------------------------------------------------------------------- */
+  /* Typography                                                              */
+  /* ----------------------------------------------------------------------- */
+  --font-sans:
+    "SF Pro Text", "SF Pro Display", "SF Pro",
+    -apple-system, BlinkMacSystemFont, system-ui,
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Fluid modular scale: clamp(min, preferred, max) */
+  --font-size-2xs: 0.625rem;
+  --font-size-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --font-size-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.875rem);
+  --font-size-md: clamp(0.9375rem, 0.9rem + 0.25vw, 1rem);
+  --font-size-lg: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  --font-size-3xl: clamp(1.875rem, 1.55rem + 1.6vw, 2.5rem);
+  --font-size-4xl: clamp(2.25rem, 1.8rem + 2.4vw, 3.5rem);
+  --font-size-5xl: clamp(3rem, 2.3rem + 3.4vw, 4.5rem);
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-none: 1;
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  --letter-spacing-tighter: -0.02em;
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.02em;
+  --letter-spacing-wider: 0.08em;
+  --letter-spacing-caps: 0.14em;
+
+  /* ----------------------------------------------------------------------- */
+  /* Spacing - 4px base numeric scale                                        */
+  /* ----------------------------------------------------------------------- */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-1: 0.25rem; /* 4  */
+  --space-2: 0.5rem; /* 8  */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.25rem; /* 20 */
+  --space-6: 1.5rem; /* 24 */
+  --space-7: 1.75rem; /* 28 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+  --space-20: 5rem; /* 80 */
+  --space-24: 6rem; /* 96 */
+  --space-32: 8rem; /* 128 */
+
+  /* ----------------------------------------------------------------------- */
+  /* Radius, border widths                                                   */
+  /* ----------------------------------------------------------------------- */
+  --radius-none: 0;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+  --radius-control: var(--radius-full);
+  --radius-surface: var(--radius-xl);
+  --radius-sheet: var(--radius-2xl);
+  --radius-banner: var(--radius-none);
+  --radius-media: var(--radius-none);
+
+  --border-width-thin: 1px;
+  --border-width-thick: 2px;
+
+  /* ----------------------------------------------------------------------- */
+  /* Elevation / shadows                                                     */
+  /* ----------------------------------------------------------------------- */
+  --shadow-xs: 0 1px 2px rgb(var(--palette-neutral-950) / 0.06);
+  --shadow-sm:
+    0 1px 3px rgb(var(--palette-neutral-950) / 0.1),
+    0 1px 2px rgb(var(--palette-neutral-950) / 0.06);
+  --shadow-md: 0 4px 12px rgb(var(--palette-neutral-950) / 0.1);
+  --shadow-lg: 0 12px 32px rgb(var(--palette-neutral-950) / 0.12);
+  --shadow-xl: 0 28px 64px rgb(var(--palette-neutral-950) / 0.14);
+  --blur-glass: 20px;
+  --shadow-glass:
+    0 8px 32px rgb(var(--palette-neutral-950) / 0.08),
+    inset 0 0.5px 0 rgb(var(--palette-neutral-0) / 0.65);
+  --shadow-accent-bleed:
+    0 0 12px rgb(var(--palette-accent-500) / 0.45),
+    0 0 28px rgb(var(--palette-accent-500) / 0.28);
+
+  /* ----------------------------------------------------------------------- */
+  /* Z-index scale                                                           */
+  /* ----------------------------------------------------------------------- */
+  --z-base: 0;
+  --z-docked: 10;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-header: 1200;
+  --z-overlay: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-toast: 1600;
+  --z-tooltip: 1700;
+
+  /* ----------------------------------------------------------------------- */
+  /* Motion                                                                  */
+  /* ----------------------------------------------------------------------- */
+  --duration-instant: 80ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 600ms;
+  /* Cinematic / scroll-linked storytelling (portfolio) */
+  --duration-scroll: 900ms;
+
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --easing-emphasized: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ----------------------------------------------------------------------- */
+  /* Layout helpers                                                          */
+  /* ----------------------------------------------------------------------- */
+  /*
+   * Measure ladder (shared with Lavanda structure; Caka keeps its own skin).
+   * page 90rem → content 72rem → description 61.25rem → narrow 48rem.
+   */
+  --page-max: 90rem; /* 1440 */
+  --content-max: 72rem; /* 1152 */
+  --description-max: 61.25rem; /* ~980 */
+  /* Alias: SiteHeader/Footer migrate to --page-max / --page-pad-inline. */
+  --container-max: var(--content-max);
+
+  /*
+   * Page chrome pad: floor 16 / 48 / 96, then grow past --page-max so edges
+   * stay aligned with Section measure="page".
+   */
+  --page-pad-floor: 1rem; /* 16 */
+  --page-pad-inline: max(
+    var(--page-pad-floor),
+    calc((100vw - var(--page-max)) / 2)
+  );
+
+  --section-pad-block: var(--space-24); /* 96 */
+  --section-gap: var(--space-16); /* 64 */
+  --description-pad-inline: 1rem; /* 16 · 24 · 32 via steps below */
+
+  --tap-target-min: 2.75rem; /* 44px */
+
+  /* Gallery grids (ported patterns from GALERIJA_012) */
+  --gallery-grid-gap: 1px;
+  --gallery-cols-phone: 3;
+  --gallery-cols-tablet: 5;
+  --gallery-cols-desktop: 9;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --page-pad-floor: 3rem; /* 48 */
+    --description-pad-inline: 1.5rem; /* 24 */
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --page-pad-floor: 6rem; /* 96 */
+    --description-pad-inline: 2rem; /* 32 */
+  }
+}
+
+/* Explicit light theme - full semantic remap (required so light wins after dark / OS dark) */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: rgb(var(--palette-neutral-50));
+  --color-surface: rgb(var(--palette-neutral-0));
+  --color-surface-raised: rgb(var(--palette-neutral-0));
+  --color-surface-sunken: rgb(var(--palette-neutral-100));
+  --color-surface-glass: rgb(var(--palette-neutral-0) / 0.72);
+  --color-overlay: rgb(var(--palette-neutral-950) / 0.5);
+
+  --color-fg: rgb(var(--palette-neutral-900));
+  --color-fg-muted: rgb(var(--palette-neutral-600));
+  --color-fg-subtle: rgb(var(--palette-neutral-500));
+  --color-fg-on-accent: rgb(var(--palette-neutral-0));
+
+  --color-border: rgb(var(--palette-neutral-200));
+  --color-border-strong: rgb(var(--palette-neutral-300));
+  --color-hairline: rgb(var(--palette-neutral-900) / 0.1);
+
+  --color-hover: rgb(var(--palette-neutral-950) / 0.04);
+  --color-active: rgb(var(--palette-neutral-950) / 0.08);
+  --color-focus-ring: rgb(var(--palette-accent-500) / 0.45);
+
+  --color-primary: rgb(var(--palette-accent-500));
+  --color-primary-hover: rgb(var(--palette-accent-600));
+  --color-primary-active: rgb(var(--palette-accent-700));
+  --color-on-primary: rgb(var(--palette-neutral-0));
+
+  --color-secondary: rgb(var(--palette-neutral-950));
+  --color-secondary-hover: rgb(var(--palette-neutral-800));
+  --color-secondary-active: rgb(var(--palette-neutral-900));
+  --color-on-secondary: rgb(var(--palette-neutral-0));
+
+  --color-success: rgb(var(--palette-green-600));
+  --color-success-surface: rgb(var(--palette-green-500) / 0.12);
+  --color-success-border: rgb(var(--palette-green-500) / 0.4);
+
+  --color-warning: rgb(var(--palette-amber-600));
+  --color-warning-surface: rgb(var(--palette-amber-500) / 0.14);
+  --color-warning-border: rgb(var(--palette-amber-500) / 0.4);
+
+  --color-danger: rgb(var(--palette-red-600));
+  --color-danger-surface: rgb(var(--palette-red-500) / 0.12);
+  --color-danger-border: rgb(var(--palette-red-500) / 0.4);
+
+  --color-info: rgb(var(--palette-blue-600));
+  --color-info-surface: rgb(var(--palette-blue-500) / 0.12);
+  --color-info-border: rgb(var(--palette-blue-500) / 0.4);
+
+  --shadow-xs: 0 1px 2px rgb(var(--palette-neutral-950) / 0.06);
+  --shadow-sm:
+    0 1px 3px rgb(var(--palette-neutral-950) / 0.1),
+    0 1px 2px rgb(var(--palette-neutral-950) / 0.06);
+  --shadow-md: 0 4px 12px rgb(var(--palette-neutral-950) / 0.1);
+  --shadow-lg: 0 12px 32px rgb(var(--palette-neutral-950) / 0.12);
+  --shadow-xl: 0 24px 48px rgb(var(--palette-neutral-950) / 0.16);
+  --shadow-glass:
+    0 8px 32px rgb(var(--palette-neutral-950) / 0.08),
+    inset 0 0.5px 0 rgb(var(--palette-neutral-0) / 0.65);
+}
+
+/* --------------------------------------------------------------------------- */
+/* Dark theme - remaps semantic roles only                                     */
+/* --------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: rgb(var(--palette-neutral-950));
+  --color-surface: rgb(var(--palette-neutral-900));
+  --color-surface-raised: rgb(var(--palette-neutral-800));
+  --color-surface-sunken: rgb(var(--palette-neutral-950));
+  --color-surface-glass: rgb(var(--palette-neutral-800) / 0.62);
+  --color-overlay: rgb(var(--palette-neutral-1000) / 0.6);
+
+  --color-fg: rgb(var(--palette-neutral-50));
+  --color-fg-muted: rgb(var(--palette-neutral-400));
+  --color-fg-subtle: rgb(var(--palette-neutral-500));
+  --color-fg-on-accent: rgb(var(--palette-neutral-0));
+
+  --color-border: rgb(var(--palette-neutral-800));
+  --color-border-strong: rgb(var(--palette-neutral-700));
+  --color-hairline: rgb(var(--palette-neutral-0) / 0.12);
+
+  --color-hover: rgb(var(--palette-neutral-0) / 0.06);
+  --color-active: rgb(var(--palette-neutral-0) / 0.12);
+  --color-focus-ring: rgb(var(--palette-accent-500) / 0.55);
+
+  --color-primary: rgb(var(--palette-accent-500));
+  --color-primary-hover: rgb(var(--palette-accent-600));
+  --color-primary-active: rgb(var(--palette-accent-700));
+  --color-on-primary: rgb(var(--palette-neutral-0));
+
+  --color-secondary: rgb(var(--palette-neutral-50));
+  --color-secondary-hover: rgb(var(--palette-neutral-200));
+  --color-secondary-active: rgb(var(--palette-neutral-100));
+  --color-on-secondary: rgb(var(--palette-neutral-950));
+
+  --color-success: rgb(var(--palette-green-500));
+  --color-success-surface: rgb(var(--palette-green-500) / 0.16);
+  --color-success-border: rgb(var(--palette-green-500) / 0.45);
+
+  --color-warning: rgb(var(--palette-amber-500));
+  --color-warning-surface: rgb(var(--palette-amber-500) / 0.18);
+  --color-warning-border: rgb(var(--palette-amber-500) / 0.45);
+
+  --color-danger: rgb(var(--palette-red-500));
+  --color-danger-surface: rgb(var(--palette-red-500) / 0.18);
+  --color-danger-border: rgb(var(--palette-red-500) / 0.45);
+
+  --color-info: rgb(var(--palette-blue-500));
+  --color-info-surface: rgb(var(--palette-blue-500) / 0.18);
+  --color-info-border: rgb(var(--palette-blue-500) / 0.45);
+
+  --shadow-xs: 0 1px 2px rgb(var(--palette-neutral-1000) / 0.5);
+  --shadow-sm: 0 1px 3px rgb(var(--palette-neutral-1000) / 0.5);
+  --shadow-md: 0 4px 16px rgb(var(--palette-neutral-1000) / 0.55);
+  --shadow-lg: 0 12px 36px rgb(var(--palette-neutral-1000) / 0.6);
+  --shadow-xl: 0 24px 52px rgb(var(--palette-neutral-1000) / 0.65);
+  --shadow-glass:
+    0 8px 32px rgb(var(--palette-neutral-1000) / 0.45),
+    inset 0 0.5px 0 rgb(var(--palette-neutral-0) / 0.08);
+}
+
+/* Follow the OS preference when no explicit theme is set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+
+    --color-bg: rgb(var(--palette-neutral-950));
+    --color-surface: rgb(var(--palette-neutral-900));
+    --color-surface-raised: rgb(var(--palette-neutral-800));
+    --color-surface-sunken: rgb(var(--palette-neutral-950));
+    --color-overlay: rgb(var(--palette-neutral-1000) / 0.6);
+
+    --color-fg: rgb(var(--palette-neutral-50));
+    --color-fg-muted: rgb(var(--palette-neutral-400));
+    --color-fg-subtle: rgb(var(--palette-neutral-500));
+    --color-fg-on-accent: rgb(var(--palette-neutral-950));
+
+    --color-border: rgb(var(--palette-neutral-800));
+    --color-border-strong: rgb(var(--palette-neutral-700));
+    --color-hairline: rgb(var(--palette-neutral-0) / 0.12);
+
+    --color-hover: rgb(var(--palette-neutral-0) / 0.06);
+    --color-active: rgb(var(--palette-neutral-0) / 0.12);
+    --color-focus-ring: rgb(var(--palette-neutral-0) / 0.55);
+
+    --color-primary: rgb(var(--palette-neutral-50));
+    --color-primary-hover: rgb(var(--palette-neutral-200));
+    --color-primary-active: rgb(var(--palette-neutral-0));
+    --color-on-primary: rgb(var(--palette-neutral-950));
+
+    --color-success: rgb(var(--palette-green-500));
+    --color-success-surface: rgb(var(--palette-green-500) / 0.16);
+    --color-success-border: rgb(var(--palette-green-500) / 0.45);
+
+    --color-warning: rgb(var(--palette-amber-500));
+    --color-warning-surface: rgb(var(--palette-amber-500) / 0.18);
+    --color-warning-border: rgb(var(--palette-amber-500) / 0.45);
+
+    --color-danger: rgb(var(--palette-red-500));
+    --color-danger-surface: rgb(var(--palette-red-500) / 0.18);
+    --color-danger-border: rgb(var(--palette-red-500) / 0.45);
+
+    --color-info: rgb(var(--palette-blue-500));
+    --color-info-surface: rgb(var(--palette-blue-500) / 0.18);
+    --color-info-border: rgb(var(--palette-blue-500) / 0.45);
+
+    --shadow-xs: 0 1px 2px rgb(var(--palette-neutral-1000) / 0.5);
+    --shadow-sm: 0 1px 3px rgb(var(--palette-neutral-1000) / 0.5);
+    --shadow-md: 0 4px 16px rgb(var(--palette-neutral-1000) / 0.55);
+    --shadow-lg: 0 12px 36px rgb(var(--palette-neutral-1000) / 0.6);
+    --shadow-xl: 0 24px 52px rgb(var(--palette-neutral-1000) / 0.65);
+  }
+}

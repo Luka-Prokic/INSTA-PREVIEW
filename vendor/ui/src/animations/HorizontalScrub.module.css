@@ -1,0 +1,23 @@
+.track {
+  position: relative;
+  width: 100%;
+}
+
+.sticky {
+  position: sticky;
+  top: 12vh;
+  overflow: hidden;
+}
+
+.strip {
+  display: flex;
+  gap: var(--space-6);
+  width: max-content;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strip {
+    will-change: auto;
+  }
+}

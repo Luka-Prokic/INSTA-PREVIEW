@@ -1,0 +1,268 @@
+/* App / explorer chrome - consumes @luka-prokic/tokens. */
+.shell {
+  --shell-sidebar: 17.5rem;
+  --shell-header-height: 3.5rem;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--shell-sidebar) 1fr;
+  min-height: 100svh;
+  /* Grow with content; window scrolls. Do not lock height + clip Y. */
+  height: auto;
+  overflow-x: clip;
+  overflow-y: visible;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  transition: grid-template-columns 220ms var(--easing-standard);
+}
+
+.shell[data-sidebar="closed"] {
+  grid-template-columns: 0 1fr;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100svh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-right: var(--border-width-thin, 1px) solid var(--color-border);
+  background: var(--color-surface);
+  min-width: 0;
+  z-index: 20;
+}
+
+.sidebarInner {
+  width: var(--shell-sidebar);
+  height: 100%;
+  overflow-y: auto;
+  padding: 1.25rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  /* Extra room under brand before Collections */
+  gap: var(--space-8);
+  opacity: 1;
+  transition: opacity 160ms var(--easing-standard);
+}
+
+.shell[data-sidebar="closed"] .sidebar {
+  border-right-color: transparent;
+  pointer-events: none;
+}
+
+.shell[data-sidebar="closed"] .sidebarInner {
+  opacity: 0;
+}
+
+.brandRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-inline: 1rem;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.brandMark {
+  display: block;
+  width: 100%;
+  max-width: 8.75rem;
+  line-height: 0;
+}
+
+.brandMark :global(img) {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brandTag {
+  display: block;
+}
+
+.main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+  overflow-y: visible;
+  background: var(--color-bg);
+  animation: caka-page-enter var(--duration-slow, 400ms) var(--easing-emphasized, var(--easing-standard, ease)) both;
+}
+
+@keyframes caka-page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main {
+    animation: none;
+  }
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-height: var(--shell-header-height);
+  padding: var(--space-2) var(--space-5);
+  border-bottom: var(--border-width-thin, 1px) solid var(--color-border);
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  -webkit-backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  z-index: 10;
+}
+
+.headerTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  max-width: min(50%, 20rem);
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 0.2rem));
+  transition:
+    opacity 160ms var(--easing-standard),
+    transform 160ms var(--easing-standard);
+  pointer-events: none;
+}
+
+.headerTitle[data-visible="true"] {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.headerControls {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.preview {
+  flex: 0 0 auto;
+  min-height: 0;
+  width: 100%;
+  overflow-x: clip;
+  overflow-y: visible;
+  padding: 0;
+}
+
+.previewStage {
+  min-height: 100%;
+  min-width: 0;
+}
+
+.previewStage :global(.collection-frame) {
+  min-height: 100%;
+  min-width: 0;
+  background: var(--collection-canvas-bg, transparent);
+  color: var(--collection-fg, inherit);
+  transition:
+    background-color 180ms var(--easing-standard),
+    color 180ms var(--easing-standard);
+}
+
+.canvas {
+  width: 100%;
+  max-width: var(--canvas-width, none);
+  margin-inline: auto;
+  min-width: 0;
+  padding-block: 1.75rem 3rem;
+  padding-inline: 0;
+  transition: max-width 200ms var(--easing-standard);
+  /* Preview width drives @container queries (Playground Mobile is not a real viewport). */
+  container-type: inline-size;
+  container-name: preview;
+}
+
+.sidebarReveal {
+  position: fixed;
+  top: 1rem;
+  left: 0.35rem;
+  z-index: 40;
+}
+
+/* Product apps: lock to the viewport so sidebar / main / nested panes scroll independently. */
+.shell[data-layout="app"] {
+  height: 100svh;
+  max-height: 100svh;
+  overflow: hidden;
+}
+
+.shell[data-layout="app"] .sidebar {
+  position: relative;
+  align-self: stretch;
+  height: auto;
+  max-height: none;
+  overflow: hidden;
+}
+
+.shell[data-layout="app"] .sidebarInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.shell[data-layout="app"] .main {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.shell[data-layout="app"] .header {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .shell {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .shell[data-layout="app"] {
+    height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
+  }
+
+  .shell[data-sidebar="closed"] {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .sidebarReveal {
+    display: none;
+  }
+
+  .headerControls {
+    display: none;
+  }
+
+  .canvas {
+    padding: 1.25rem 1rem 5rem;
+  }
+}

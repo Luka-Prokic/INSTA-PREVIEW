@@ -1,0 +1,31 @@
+.root {
+  transform-style: preserve-3d;
+  transition: transform var(--duration-fast) var(--easing-out);
+  will-change: transform;
+}
+
+.shell {
+  display: block;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .root:hover {
+    transition-duration: var(--duration-instant);
+  }
+}
+
+/* rAF-driven idle / hover - CSS transition fights the frame updates */
+.root[data-animated="true"] {
+  transition: none;
+}
+
+.root[data-reduced="true"] {
+  transform: none !important;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transform: none !important;
+  }
+}

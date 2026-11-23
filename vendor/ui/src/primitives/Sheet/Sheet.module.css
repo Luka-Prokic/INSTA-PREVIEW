@@ -1,0 +1,82 @@
+.dialog {
+  --sheet-ms: var(--duration-slow, 400ms);
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  overflow: hidden;
+  color: var(--color-fg);
+}
+
+.dialog:focus,
+.dialog:focus-visible {
+  outline: none;
+}
+
+.dialog::backdrop {
+  background: var(--color-overlay);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  overflow: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--sheet-ms) var(--easing-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.sheet[data-sheet] {
+  clip-path: inset(0);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  min-height: calc(var(--tap-target-min) + var(--space-2) * 2);
+  padding: var(--space-2) var(--space-5);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.header :global(h1),
+.header :global(h2),
+.header :global(h3) {
+  margin: 0;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    clip-path: none;
+    transition: none;
+  }
+}

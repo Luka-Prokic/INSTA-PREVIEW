@@ -1,0 +1,107 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-fg-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard);
+}
+
+.button[data-radius="sharp"] {
+  border-radius: 0;
+}
+
+.button[data-radius="pill"] {
+  border-radius: var(--radius-control, var(--radius-full));
+}
+
+.button[data-size="sm"] {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.button[data-size="md"] {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.button[data-size="lg"] {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--color-fg-muted);
+}
+
+.button[data-variant="solid"] {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-md);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button[data-variant="ghost"]:hover {
+    color: var(--color-fg);
+    background: var(--color-hover);
+  }
+
+  .button[data-variant="solid"]:hover {
+    filter: brightness(0.96);
+  }
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+.button[data-variant="solid"]:focus-visible {
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.icon svg {
+  display: block;
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.button[data-size="md"] .icon {
+  font-size: 1.75rem;
+}
+
+.button[data-size="md"] .icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.button[data-size="lg"] .icon {
+  font-size: 2rem;
+}
+
+.button[data-size="lg"] .icon svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}

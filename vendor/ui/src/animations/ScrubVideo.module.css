@@ -1,0 +1,16 @@
+.section {
+  position: relative;
+  width: 100%;
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-banner, 0);
+}
+
+.section[data-reduced="true"] .video {
+  /* Static frame - no scrubbing */
+}

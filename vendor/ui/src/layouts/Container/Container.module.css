@@ -1,0 +1,16 @@
+.root {
+  width: min(100% - (var(--space-6) * 2), var(--content-max));
+  margin-inline: auto;
+  box-sizing: border-box;
+  container-type: inline-size;
+  container-name: caka-content;
+}
+
+.narrow {
+  width: min(100% - (var(--space-6) * 2), 48rem);
+}
+
+.full {
+  width: 100%;
+  max-width: none;
+}

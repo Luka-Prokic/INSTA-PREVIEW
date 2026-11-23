@@ -1,0 +1,137 @@
+.text {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text-color, var(--color-fg));
+  font-size: var(--text-size, var(--font-size-md));
+  font-weight: var(--text-weight, var(--font-weight-regular));
+  line-height: var(--text-leading, var(--line-height-normal));
+}
+
+.text[data-size="2xs"] {
+  --text-size: var(--font-size-2xs);
+  --text-leading: 1.2;
+}
+.text[data-size="xs"] {
+  --text-size: var(--font-size-xs);
+}
+.text[data-size="sm"] {
+  --text-size: var(--font-size-sm);
+}
+.text[data-size="md"] {
+  --text-size: var(--font-size-md);
+}
+.text[data-size="lg"] {
+  --text-size: var(--font-size-lg);
+  --text-leading: var(--line-height-snug);
+}
+.text[data-size="xl"] {
+  --text-size: var(--font-size-xl);
+  --text-leading: var(--line-height-snug);
+}
+.text[data-size="2xl"] {
+  --text-size: var(--font-size-2xl);
+  --text-leading: var(--line-height-tight);
+}
+.text[data-size="3xl"] {
+  --text-size: var(--font-size-3xl);
+  --text-leading: var(--line-height-tight);
+}
+.text[data-size="4xl"] {
+  --text-size: var(--font-size-4xl);
+  --text-leading: var(--line-height-tight);
+}
+.text[data-size="5xl"] {
+  --text-size: var(--font-size-5xl);
+  --text-leading: var(--line-height-none);
+}
+
+.text[data-weight="regular"] {
+  --text-weight: var(--font-weight-regular);
+}
+.text[data-weight="medium"] {
+  --text-weight: var(--font-weight-medium);
+}
+.text[data-weight="semibold"] {
+  --text-weight: var(--font-weight-semibold);
+}
+.text[data-weight="bold"] {
+  --text-weight: var(--font-weight-bold);
+}
+
+.text[data-tone="default"] {
+  --text-color: var(--color-fg);
+}
+.text[data-tone="muted"] {
+  --text-color: var(--color-fg-muted);
+}
+.text[data-tone="subtle"] {
+  --text-color: var(--color-fg-subtle);
+}
+.text[data-tone="primary"] {
+  --text-color: var(--color-primary);
+}
+.text[data-tone="on-accent"] {
+  --text-color: var(--color-fg-on-accent);
+}
+.text[data-tone="success"] {
+  --text-color: var(--color-success);
+}
+.text[data-tone="warning"] {
+  --text-color: var(--color-warning);
+}
+.text[data-tone="danger"] {
+  --text-color: var(--color-danger);
+}
+.text[data-tone="info"] {
+  --text-color: var(--color-info);
+}
+
+.text[data-align="start"] {
+  text-align: start;
+}
+.text[data-align="center"] {
+  text-align: center;
+}
+.text[data-align="end"] {
+  text-align: end;
+}
+
+.text[data-transform="uppercase"] {
+  text-transform: uppercase;
+}
+.text[data-transform="capitalize"] {
+  text-transform: capitalize;
+}
+
+.text[data-tracking="tighter"] {
+  letter-spacing: var(--letter-spacing-tighter);
+}
+.text[data-tracking="tight"] {
+  letter-spacing: var(--letter-spacing-tight);
+}
+.text[data-tracking="normal"] {
+  letter-spacing: var(--letter-spacing-normal);
+}
+.text[data-tracking="wide"] {
+  letter-spacing: var(--letter-spacing-wide);
+}
+.text[data-tracking="wider"] {
+  letter-spacing: var(--letter-spacing-wider);
+}
+.text[data-tracking="caps"] {
+  letter-spacing: var(--letter-spacing-caps);
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--text-clamp, 2);
+  line-clamp: var(--text-clamp, 2);
+  overflow: hidden;
+}

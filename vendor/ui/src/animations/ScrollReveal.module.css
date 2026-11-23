@@ -1,0 +1,46 @@
+.root {
+  opacity: 0;
+  transform: translate3d(0, 4.5rem, 0);
+  filter: none;
+  transition:
+    opacity var(--duration-scroll, 900ms) var(--easing-out),
+    transform var(--duration-scroll, 900ms) var(--easing-out),
+    filter var(--duration-scroll, 900ms) var(--easing-out);
+  will-change: opacity, transform, filter;
+}
+
+.root[data-variant="up"] {
+  transform: translate3d(0, 4.5rem, 0);
+}
+.root[data-variant="left"] {
+  transform: translate3d(-4rem, 0, 0);
+}
+.root[data-variant="right"] {
+  transform: translate3d(4rem, 0, 0);
+}
+.root[data-variant="fade"] {
+  transform: none;
+}
+.root[data-variant="scale"] {
+  transform: translate3d(0, 2rem, 0) scale(0.88);
+}
+.root[data-variant="blur"] {
+  transform: translate3d(0, 2.5rem, 0);
+  filter: blur(12px);
+}
+
+.root[data-visible="true"],
+.root[data-reduced="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

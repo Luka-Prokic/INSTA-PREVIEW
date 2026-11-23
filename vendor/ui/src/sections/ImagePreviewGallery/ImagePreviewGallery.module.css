@@ -1,0 +1,307 @@
+.trigger {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  text-align: start;
+}
+
+.trigger img,
+.detailSlide img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.detailRoot {
+  inline-size: 100%;
+}
+
+/* Desktop - vertical stack beside the info panel. */
+.detailDesktop {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detailMobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  inline-size: 100%;
+}
+
+.detailStrip {
+  --strip-gap: var(--space-3);
+
+  display: flex;
+  gap: var(--strip-gap);
+  inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.detailStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.detailSlide {
+  flex: 0 0 100%;
+  inline-size: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: zoom-in;
+  text-align: start;
+}
+
+.detailInsert,
+.detailInsertSlide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  padding: var(--space-6) var(--space-5);
+  background: var(--color-surface);
+}
+
+.detailInsertSlide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-block-size: min(70vw, 20rem);
+}
+
+.lineIndicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-5);
+}
+
+.line {
+  display: block;
+  inline-size: 1.75rem;
+  block-size: 1px;
+  background: var(--color-fg);
+  opacity: 0.22;
+  transition: opacity var(--duration-fast) var(--easing-out);
+}
+
+.lineActive {
+  opacity: 1;
+}
+
+@media (min-width: 64.01rem) {
+  .detailDesktop {
+    display: flex;
+  }
+
+  .detailMobile {
+    display: none;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  /* Beat playground chrome; fallback when token is out of scope on body. */
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: rgba(var(--color-fg-rgb, 28, 28, 26), 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: previewFadeIn var(--duration-base) var(--easing-out) both;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .overlay {
+    touch-action: none;
+  }
+}
+
+@keyframes previewFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.close {
+  position: absolute;
+  inset-block-start: var(--space-4);
+  inset-inline-end: var(--space-4);
+  z-index: 3;
+  border: 0;
+  background: transparent;
+  color: var(--color-surface);
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+.nav {
+  position: absolute;
+  inset-block: 0;
+  z-index: 3;
+  display: none;
+  place-items: center;
+  inline-size: 3rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-surface);
+  cursor: pointer;
+  opacity: 0.72;
+  transition: opacity var(--duration-fast) var(--easing-out);
+}
+
+.nav:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.nav[data-direction="prev"] {
+  inset-inline-start: 0;
+}
+
+.nav[data-direction="next"] {
+  inset-inline-end: 0;
+}
+
+@media (min-width: 64.01rem) {
+  .navDesktop {
+    display: grid;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav:not(:disabled):hover {
+    opacity: 1;
+  }
+}
+
+.chevron {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+}
+
+.previewStrip {
+  --strip-gap: var(--space-3);
+
+  flex: 1;
+  min-block-size: 0;
+  display: flex;
+  gap: var(--strip-gap);
+  inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior: none;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.overlay[data-has-thumbs] .previewStrip {
+  padding-block-end: calc(var(--thumb-size, 3.5rem) + var(--space-3) * 2);
+}
+
+.previewStrip[data-zoomed] {
+  overflow-x: hidden;
+  touch-action: none;
+}
+
+.previewStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.previewSlide {
+  flex: 0 0 100%;
+  inline-size: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.previewThumbBar {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  pointer-events: none;
+}
+
+.previewThumbs {
+  display: inline-flex;
+  gap: var(--space-2);
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+
+.previewThumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.thumb {
+  flex: 0 0 var(--thumb-size, 3.5rem);
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity var(--duration-fast) var(--easing-out);
+}
+
+.thumbActive {
+  opacity: 1;
+}
+
+.thumbFrame {
+  display: block;
+  inline-size: var(--thumb-size, 3.5rem);
+  block-size: var(--thumb-size, 3.5rem);
+  overflow: hidden;
+}
+
+.thumbImage {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 40rem) {
+  .navDesktop {
+    display: none;
+  }
+}

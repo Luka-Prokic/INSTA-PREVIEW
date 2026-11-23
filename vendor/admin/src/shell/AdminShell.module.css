@@ -1,0 +1,475 @@
+.shell {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  min-block-size: calc(100dvh / var(--admin-zoom, 1));
+  transition: grid-template-columns var(--duration-base) var(--ease-out);
+}
+
+.shell[data-folded],
+:global(html[data-admin-nav-folded]) .shell {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+}
+
+.mobileBar,
+.backdrop {
+  display: none;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-inline-end: var(--hairline);
+  padding: var(--space-6) var(--space-5);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  block-size: calc(100dvh / var(--admin-zoom, 1));
+  overflow-y: auto;
+  background: var(--color-paper);
+}
+
+.brandRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.brand {
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+  color: var(--color-ink);
+}
+
+.mobileBrand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-inline-size: 0;
+  line-height: 1.2;
+}
+
+.brandSubRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.fold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  inline-size: 44px;
+  block-size: 44px;
+  margin-inline-start: auto;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+@media (min-width: 721px) {
+  .fold:hover {
+    color: var(--color-ink);
+  }
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0.01em;
+}
+
+.brandSub {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-ink-faint);
+}
+
+.demoTag {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.navLinkLabel {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.navDemoTag {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-block-start: var(--space-6);
+}
+
+.dashboardLink {
+  margin-block-start: var(--space-8);
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 44px;
+  font: var(--type-primary);
+  padding: var(--space-3) var(--space-2);
+  margin-inline: calc(var(--space-2) * -1);
+  border-radius: var(--radius-none);
+  color: var(--color-ink-soft);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.navLink[data-active] {
+  color: var(--color-ink);
+}
+
+.navIcon {
+  inline-size: 0.95rem;
+  block-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.navDivider {
+  border: 0;
+  border-block-start: var(--hairline);
+  margin-block: var(--space-4);
+}
+
+@media (min-width: 721px) {
+  .navLink:hover {
+    color: var(--color-ink);
+  }
+}
+
+.sidebarFooter {
+  margin-block-start: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-5);
+}
+
+.rowSize {
+  padding-inline: var(--space-2);
+  margin-inline: calc(var(--space-2) * -1);
+  margin-block-end: var(--space-2);
+}
+
+.rowSizeGroup {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-hairline);
+  border: var(--hairline);
+}
+
+.rowSizeButton {
+  padding: var(--space-2) 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-align: center;
+  color: var(--color-ink-soft);
+  background: var(--color-paper);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.rowSizeButton[data-active] {
+  color: var(--color-ink);
+  background: rgba(var(--color-ink-rgb), 0.06);
+}
+
+@media (min-width: 721px) and (hover: hover) and (pointer: fine) {
+  .rowSizeButton:hover:not([data-active]) {
+    color: var(--color-ink);
+    background: var(--color-surface-hover);
+  }
+}
+
+.logoutForm {
+  display: contents;
+}
+
+.label {
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.logout {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: var(--type-primary);
+  color: var(--color-ink-faint);
+  text-align: start;
+  min-block-size: 44px;
+  padding: var(--space-2) var(--space-2);
+  margin-inline: calc(var(--space-2) * -1);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+@media (min-width: 721px) {
+  .logout:hover {
+    color: var(--color-error);
+  }
+}
+
+/* Isolates the page column so the bottom dissolve punches content alpha, not the sidebar. */
+.main {
+  position: relative;
+  isolation: isolate;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--admin-gutter, var(--space-6)) var(--admin-gutter, var(--space-6)) max(112px, env(safe-area-inset-bottom, 0px));
+  min-inline-size: 0;
+  inline-size: 100%;
+  min-block-size: calc(100dvh / var(--admin-zoom, 1));
+  overflow-x: clip;
+}
+
+.viewportFade {
+  position: fixed;
+  z-index: 20;
+  pointer-events: none;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 112px;
+  /* Paper dissolve overlay. Do not use mask-image on the scrollport — it breaks sticky headers. */
+  background: linear-gradient(to bottom, transparent, var(--color-paper) 82%);
+}
+
+/* A working surface fills the column. The list dissolve and its clearance are for scrolling rows. */
+.shell:has([data-surface="stage"]) .viewportFade,
+.shell:has([data-calendar="month"]) .viewportFade {
+  display: none;
+}
+
+.shell:has([data-surface="stage"]) .content {
+  block-size: calc(100dvh / var(--admin-zoom, 1));
+  min-block-size: 0;
+  padding-block-end: var(--admin-gutter, var(--space-6));
+  overflow: hidden;
+}
+
+.shell:has([data-surface="stage"]) .stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.stage[data-play="forward"],
+.stage[data-play="back"],
+.stage[data-play="intro"] {
+  /* backwards: the blur is in place on the first frame, then the same resolve runs. */
+  animation: section-resolve var(--t-focus) var(--ease-focus) backwards;
+}
+
+@keyframes section-resolve {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.shell[data-folded] .sidebar,
+:global(html[data-admin-nav-folded]) .shell .sidebar {
+  padding-inline: 0;
+  align-items: center;
+}
+
+.shell[data-folded] .brand,
+:global(html[data-admin-nav-folded]) .shell .brand,
+.shell[data-folded] .label,
+:global(html[data-admin-nav-folded]) .shell .label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.shell[data-folded] .navLink,
+:global(html[data-admin-nav-folded]) .shell .navLink,
+.shell[data-folded] .logout,
+:global(html[data-admin-nav-folded]) .shell .logout {
+  justify-content: center;
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
+.menuButton {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .shell,
+  .shell[data-folded],
+  :global(html[data-admin-nav-folded]) .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .brandRow .fold {
+    display: none;
+  }
+
+  .content {
+    padding-block-end: calc(max(12px, env(safe-area-inset-bottom, 0px)) + 68px);
+  }
+
+  .shell:has([data-surface="stage"]) .content {
+    padding-block-end: var(--admin-gutter, var(--space-6));
+  }
+
+  .viewportFade {
+    block-size: 88px;
+  }
+
+  .menuButton {
+    display: inline-flex;
+    position: fixed;
+    z-index: calc(var(--z-overlay) + 1);
+    inset-block-start: auto;
+    inset-inline-end: auto;
+    inset-block-end: max(12px, env(safe-area-inset-bottom, 0px));
+    inset-inline-start: max(12px, env(safe-area-inset-left, 0px));
+    align-items: center;
+    justify-content: center;
+    inline-size: 44px;
+    block-size: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 22px;
+    color: var(--color-ink);
+    cursor: pointer;
+    background: none;
+    box-shadow: none;
+  }
+
+  .shell[data-nav-open] .menuButton {
+    inset-block-end: auto;
+    inset-inline-start: auto;
+    inset-block-start: max(12px, env(safe-area-inset-top, 0px));
+    inset-inline-end: max(12px, env(safe-area-inset-right, 0px));
+  }
+
+  .menuButton:active {
+    opacity: 0.55;
+  }
+
+  .menuButton :global(.adminIcon) {
+    inline-size: 40px;
+    block-size: 40px;
+    max-inline-size: none;
+  }
+
+  .shell[data-nav-open] .menuButton :global(.adminIcon) {
+    inline-size: 36px;
+    block-size: 36px;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-overlay);
+    inline-size: min(18rem, calc(100dvw - 4.5rem));
+    block-size: 100dvh;
+    padding-block: max(var(--space-6), env(safe-area-inset-top, 0px)) max(var(--space-5), env(safe-area-inset-bottom, 0px));
+    padding-inline: var(--space-5);
+    align-items: stretch;
+    transform: translateX(-105%);
+    visibility: hidden;
+    overscroll-behavior: contain;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      visibility 0s linear var(--duration-base);
+  }
+
+  .shell[data-nav-open] .sidebar {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform var(--duration-base) var(--ease-out),
+      visibility 0s;
+  }
+
+  .shell[data-nav-open] .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    border: 0;
+    padding: 0;
+    background: rgba(var(--color-ink-rgb), 0.35);
+    cursor: pointer;
+  }
+
+  .shell[data-folded] .sidebar,
+  :global(html[data-admin-nav-folded]) .shell .sidebar {
+    padding-inline: var(--space-5);
+    align-items: stretch;
+  }
+
+  .shell[data-folded] .brand,
+  :global(html[data-admin-nav-folded]) .shell .brand,
+  .shell[data-folded] .label,
+  :global(html[data-admin-nav-folded]) .shell .label {
+    position: static;
+    inline-size: auto;
+    block-size: auto;
+    overflow: visible;
+    clip: auto;
+  }
+
+  .shell[data-folded] .navLink,
+  :global(html[data-admin-nav-folded]) .shell .navLink,
+  .shell[data-folded] .logout,
+  :global(html[data-admin-nav-folded]) .shell .logout {
+    justify-content: flex-start;
+    padding-inline: var(--space-2);
+    margin-inline: calc(var(--space-2) * -1);
+  }
+
+  .navLink,
+  .logout {
+    inline-size: 100%;
+  }
+}

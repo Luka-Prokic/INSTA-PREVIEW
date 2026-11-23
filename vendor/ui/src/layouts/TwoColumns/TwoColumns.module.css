@@ -1,0 +1,76 @@
+.root {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.rule {
+  margin: 0;
+  border: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-hairline);
+}
+
+.dividerOnInk .rule {
+  background: color-mix(in srgb, var(--color-on-secondary) 40%, transparent);
+}
+
+@media (min-width: 48rem) {
+  .root:not(.stackBelowLarge) {
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-8);
+    align-items: stretch;
+  }
+
+  .root:not(.stackBelowLarge) .rule {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    justify-self: center;
+  }
+}
+
+@media (min-width: 64rem) {
+  .stackBelowLarge {
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-8);
+    align-items: stretch;
+  }
+
+  .stackBelowLarge .rule {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .hideHrOnWrap {
+    gap: var(--space-6);
+  }
+
+  .hideHrOnWrap .rule {
+    display: none;
+  }
+}
+
+@media (max-width: 63.999rem) {
+  .stackBelowLarge.hideHrOnWrap {
+    gap: var(--space-6);
+  }
+
+  .stackBelowLarge.hideHrOnWrap .rule {
+    display: none;
+  }
+}

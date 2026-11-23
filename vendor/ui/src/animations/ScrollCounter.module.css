@@ -1,0 +1,9 @@
+.root {
+  display: inline-block;
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--letter-spacing-tight, -0.04em);
+  line-height: 1;
+  color: var(--color-fg);
+}

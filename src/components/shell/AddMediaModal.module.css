@@ -1,0 +1,167 @@
+/* MediaField-aligned upload / preview inside shell modal cards. */
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 88px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  background: var(--color-field);
+  color: var(--color-ink);
+  text-align: start;
+  cursor: pointer;
+}
+
+.upload[data-drop] {
+  background: rgba(var(--color-ink-rgb), 0.12);
+}
+
+.upload:disabled {
+  opacity: 0.45;
+  cursor: progress;
+}
+
+.uploadLabel {
+  font: var(--type-primary);
+}
+
+.uploadHint {
+  font: var(--type-secondary);
+  color: var(--color-ink-faint);
+}
+
+.file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+.preview {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  background: var(--color-field);
+}
+
+.crop {
+  position: relative;
+  flex: 0 0 auto;
+  width: 96px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: rgba(var(--color-ink-rgb), 0.08);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.crop:active {
+  cursor: grabbing;
+}
+
+.cropImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.metaTitle {
+  margin: 0;
+  font: var(--type-primary);
+}
+
+.metaHint {
+  margin: 0;
+  font: var(--type-secondary);
+  color: var(--color-ink-faint);
+}
+
+.fileName {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--type-secondary);
+  color: var(--color-ink-soft);
+}
+
+.kindField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-ink-soft);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.linkBtn {
+  border: 0;
+  background: none;
+  padding: 0;
+  min-height: 44px;
+  font: var(--type-secondary);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.linkBtn:hover {
+  color: var(--color-ink);
+}
+
+.linkBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.selected {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 12px;
+  border: 1px solid var(--color-field-line);
+  border-radius: var(--admin-card-radius);
+  background: var(--color-field);
+}
+
+.mediaField {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

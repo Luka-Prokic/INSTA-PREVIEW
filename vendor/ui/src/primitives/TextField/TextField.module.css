@@ -1,0 +1,113 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.labelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-fg);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-surface-glass);
+  border: var(--border-width-thin) solid var(--color-hairline);
+  border-radius: var(--radius-control, var(--radius-full));
+  color: var(--color-fg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.control[data-size="sm"] {
+  min-height: 2.25rem;
+  padding-inline: var(--space-4);
+  font-size: max(16px, var(--font-size-sm));
+}
+.control[data-size="md"] {
+  min-height: var(--tap-target-min);
+  padding-inline: var(--space-4);
+  font-size: max(16px, var(--font-size-md));
+}
+.control[data-size="lg"] {
+  min-height: 3.25rem;
+  padding-inline: var(--space-5);
+  font-size: var(--font-size-lg);
+}
+
+.control:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.control[data-invalid="true"] {
+  border-color: var(--color-danger);
+}
+.control[data-invalid="true"]:focus-within {
+  box-shadow: 0 0 0 3px var(--color-danger-border);
+}
+
+.control[data-disabled="true"] {
+  background-color: var(--color-surface-sunken);
+  color: var(--color-fg-subtle);
+  cursor: not-allowed;
+}
+
+.input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  font: inherit;
+  font-size: max(16px, 1em);
+  padding-block: var(--space-2);
+}
+
+.input::placeholder {
+  color: var(--color-fg-subtle);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.addon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-fg-muted);
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-muted);
+}
+
+.error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}

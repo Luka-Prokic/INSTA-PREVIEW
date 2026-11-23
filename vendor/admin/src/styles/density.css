@@ -1,0 +1,49 @@
+/**
+ * Admin UI scale. Compact and spacious also tighten or loosen table rows.
+ * `data-admin-table-density` on <html> is set from the stored S/M/L preference.
+ * Zoom is on the document so the whole admin scales, including a narrow window.
+ */
+html {
+  --admin-zoom: 1;
+  --admin-table-row-pad: 12px;
+  --admin-table-thumb-size: 40px;
+  --admin-table-handle-size: 20px;
+}
+
+html[data-admin-table-density="compact"] {
+  --admin-zoom: 0.9;
+  --admin-table-row-pad: 8px;
+  --admin-table-thumb-size: 32px;
+  --admin-table-handle-size: 16px;
+  zoom: var(--admin-zoom);
+  min-height: calc(100dvh / var(--admin-zoom));
+  background: var(--color-paper);
+}
+
+html[data-admin-table-density="comfortable"] {
+  --admin-table-row-pad: 12px;
+  --admin-table-thumb-size: 40px;
+}
+
+html[data-admin-table-density="spacious"] {
+  --admin-zoom: 1.12;
+  --admin-table-row-pad: 16px;
+  --admin-table-thumb-size: 48px;
+  zoom: var(--admin-zoom);
+  min-height: calc(100dvh / var(--admin-zoom));
+  background: var(--color-paper);
+}
+
+html[data-admin-table-density="compact"] body,
+html[data-admin-table-density="spacious"] body {
+  min-height: calc(100dvh / var(--admin-zoom));
+  background: var(--color-paper);
+}
+
+@media (max-width: 720px) {
+  html[data-admin-table-density="compact"],
+  html[data-admin-table-density="spacious"] {
+    --admin-zoom: 1;
+    zoom: 1;
+  }
+}

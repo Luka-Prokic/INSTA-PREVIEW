@@ -1,0 +1,123 @@
+/*
+ * NEXT-CAKA-UI - Modern CSS reset.
+ * Minimal, opinion-light. Owns box model, margins, media defaults, and
+ * accessibility affordances (reduced motion, focus visibility).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/*
+ * Floor text-entry controls at 16px so iOS Safari never zoom-on-focus.
+ * Ships with every consumer that loads this reset (collections and playground).
+ */
+input:not(
+  [type="button"],
+  [type="submit"],
+  [type="reset"],
+  [type="checkbox"],
+  [type="radio"],
+  [type="range"],
+  [type="file"],
+  [type="image"],
+  [type="color"],
+  [type="hidden"]
+),
+textarea,
+select {
+  font-size: max(16px, 1em);
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+  padding: 0;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+:target {
+  scroll-margin-block: var(--space-16, 4rem);
+}
+
+/* Visible keyboard focus everywhere; never remove without a replacement. */
+:focus-visible {
+  outline: var(--border-width-thick, 2px) solid var(--color-focus-ring, currentColor);
+  outline-offset: 2px;
+}
+
+/*
+ * Hover is for fine pointers only (mouse / trackpad).
+ * Never ship bare `:hover` rules - wrap them:
+ *   @media (hover: hover) and (pointer: fine) { …:hover { … } }
+ * Touch and coarse tablets must not get sticky hover / hover-only chrome.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

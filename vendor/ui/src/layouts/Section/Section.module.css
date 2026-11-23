@@ -1,0 +1,23 @@
+.root {
+  display: block;
+  width: 100%;
+}
+
+.pad {
+  padding-block: var(--section-pad-block);
+}
+
+.page {
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--page-pad-inline);
+}
+
+.light {
+  background: transparent;
+}
+
+.ink {
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+}

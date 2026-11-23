@@ -1,0 +1,45 @@
+.root {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  outline: none;
+}
+
+.root:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+.track {
+  display: flex;
+  gap: var(--space-5);
+  width: max-content;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-1) var(--space-8);
+}
+
+.root[data-snap="start"] .track {
+  scroll-snap-type: x mandatory;
+}
+
+.root[data-snap="center"] .track {
+  scroll-snap-type: x mandatory;
+}
+
+.root[data-snap="none"] .track {
+  scroll-snap-type: none;
+}
+
+.item {
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  scroll-snap-align: start;
+}
+
+.root[data-snap="center"] .item {
+  scroll-snap-align: center;
+}

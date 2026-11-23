@@ -1,0 +1,92 @@
+.bar {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  pointer-events: none;
+}
+
+/* Dynamic Island — pin content to the island’s vertical center (~29.5px) */
+.bar[data-face="island"] {
+  padding: 0 26px;
+  align-items: start;
+}
+
+.bar[data-face="island"] .time,
+.bar[data-face="island"] .icons {
+  /* island top 11 + half height 18.5 − half content ≈ 21 */
+  margin-top: 20px;
+}
+
+/* Notch — sit in the ears under the notch lip */
+.bar[data-face="notch"] {
+  padding: 0 22px 8px;
+  align-items: end;
+}
+
+/* Classic SE */
+.bar[data-face="home"] {
+  padding: 0 10px;
+  align-items: center;
+}
+
+.time {
+  justify-self: start;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.24px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar[data-face="island"] .time {
+  /* Real iOS: time sits in a centered pocket left of the island */
+  width: 54px;
+  text-align: center;
+  margin-left: 6px;
+}
+
+.bar[data-face="notch"] .time {
+  width: 54px;
+  text-align: center;
+  margin-left: 4px;
+  font-size: 15px;
+}
+
+.bar[data-face="home"] .time {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  line-height: 16px;
+  padding-left: 2px;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  height: 13px;
+  margin-right: 2px;
+}
+
+.bar[data-face="home"] .icons {
+  gap: 3px;
+  height: 11px;
+  margin-right: 0;
+}
+
+.bar[data-face="home"] .icon {
+  transform: scale(0.82);
+  transform-origin: center right;
+}
+
+.icon {
+  display: block;
+  flex-shrink: 0;
+}

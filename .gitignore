@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.data
+.env
+.env*.local
+.npmrc
+.pnpm-store
+*.tsbuildinfo
+next-env.d.ts

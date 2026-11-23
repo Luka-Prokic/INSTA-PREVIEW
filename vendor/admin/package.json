@@ -1,0 +1,27 @@
+{
+  "name": "@caka/admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/admin.css",
+    "./session": "./src/auth/session.ts",
+    "./list": "./src/table/list-params.ts"
+  },
+  "peerDependencies": {
+    "next": "^15 || ^16",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "dependencies": {
+    "jose": "^6.1.0"
+  }
+}

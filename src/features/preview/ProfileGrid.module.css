@@ -1,0 +1,35 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--ig-gap, 1px);
+  width: 100%;
+  background: var(--ig-border, #dbdbdb);
+}
+
+.gridDesktop {
+  gap: 4px;
+  background: transparent;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--ig-fg, #000);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.emptyBody {
+  margin: 0;
+  color: var(--ig-secondary, #737373);
+  font-size: 14px;
+}

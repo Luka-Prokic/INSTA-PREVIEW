@@ -1,0 +1,106 @@
+.panel {
+  width: min(100%, 26rem);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  max-height: min(90dvh, 48rem);
+  transition: height 480ms cubic-bezier(0.25, 1.06, 0.35, 1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.blankLink {
+  align-self: flex-start;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-soft);
+  font: var(--type-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.blankLink:hover:not(:disabled) {
+  color: var(--color-ink);
+}
+
+.blankLink:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.advanced {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.advanced > summary {
+  list-style: none;
+  cursor: pointer;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-ink-soft);
+  user-select: none;
+}
+
+.advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced > summary:hover {
+  color: var(--color-ink);
+}
+
+.advancedBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.password {
+  position: relative;
+}
+
+.password input {
+  padding-right: 64px;
+}
+
+.toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-soft);
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.toggle:hover {
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

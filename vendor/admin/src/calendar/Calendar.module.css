@@ -1,0 +1,129 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.toolbar h2 {
+  font: var(--type-primary);
+  letter-spacing: var(--tracking-tight);
+  margin-inline-end: auto;
+}
+
+.toolbar button {
+  font: var(--type-primary);
+  min-block-size: 44px;
+  padding: 12px 16px;
+  color: var(--color-ink-soft);
+}
+
+.views {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.views button[data-active] {
+  color: var(--color-ink);
+  border-block-end: 1px solid var(--color-ink);
+}
+
+.month,
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-block-start: var(--hairline);
+  border-inline-start: var(--hairline);
+}
+
+.weekday {
+  padding: var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  border-inline-end: var(--hairline);
+  border-block-end: var(--hairline);
+}
+
+.day {
+  min-block-size: 88px;
+  padding: var(--space-2);
+  text-align: start;
+  vertical-align: top;
+  border-inline-end: var(--hairline);
+  border-block-end: var(--hairline);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.day[data-outside] {
+  color: var(--color-ink-faint);
+}
+
+.day[data-selected] {
+  background: rgba(var(--color-ink-rgb), 0.05);
+}
+
+.events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-xs);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .toolbar h2 {
+    flex: 1 1 8rem;
+    min-inline-size: 0;
+  }
+
+  .toolbar button {
+    padding-inline: 8px;
+  }
+
+  .views {
+    flex: 1 1 100%;
+  }
+
+  .weekday {
+    padding: 6px 2px;
+    letter-spacing: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .day {
+    min-block-size: 52px;
+    padding: 4px;
+    overflow: hidden;
+    font-size: var(--text-xs);
+  }
+
+  .events {
+    overflow: hidden;
+  }
+
+  .events span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  box-sizing: border-box;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  animation: caka-page-enter var(--duration-slow, 400ms) var(--easing-emphasized, var(--easing-standard, ease)) both;
+}
+
+@keyframes caka-page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+  }
+}

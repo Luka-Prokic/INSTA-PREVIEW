@@ -1,0 +1,206 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 0;
+  color: var(--color-fg);
+}
+
+.padPage {
+  padding-inline: var(--page-pad-inline);
+}
+
+.padDescription {
+  padding-inline: var(--description-pad-inline);
+}
+
+.padNone {
+  padding-inline: 0;
+}
+
+.toneOnInk {
+  color: var(--color-on-secondary);
+}
+
+.item,
+.link {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.dividers > .item,
+.dividers > .link {
+  border-block-start: 1px solid var(--color-hairline);
+}
+
+.dividers > :first-child {
+  border-block-start: 1px solid var(--color-hairline);
+}
+
+.trigger,
+.link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  margin: 0;
+  padding-block: var(--space-6);
+  padding-inline: 0;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight, 1.2);
+  transition:
+    color var(--duration-fast) var(--easing-out),
+    background-color var(--duration-fast) var(--easing-out);
+}
+
+.trigger:focus-visible,
+.link:focus-visible {
+  outline: none;
+  background: var(--color-hover);
+}
+
+.trigger:focus:not(:focus-visible),
+.link:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.label {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: 1em;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.glyph {
+  position: relative;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+}
+
+.glyphBar {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 0.7em;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transform: translate(-50%, -50%);
+  transition: transform var(--duration-fast) var(--easing-out), opacity var(--duration-fast) var(--easing-out);
+}
+
+.glyphBar[data-axis="v"] {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.glyph[data-open="true"] .glyphBar[data-axis="v"] {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(90deg) scaleY(0);
+}
+
+.panelShell {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-base) var(--easing-out);
+}
+
+.itemOpen .panelShell {
+  grid-template-rows: 1fr;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding-block-end: var(--space-4);
+  padding-inline-start: var(--space-6);
+  gap: var(--space-4);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--easing-out);
+}
+
+.itemOpen .panel {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panelShell,
+  .panel,
+  .glyphBar {
+    transition: none;
+  }
+}
+
+.panel > .link {
+  border-block-start: 0;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  padding-block: 0.15em;
+  font-size: var(--font-size-md);
+}
+
+.panel > .link .label {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  text-transform: none;
+}
+
+.panel > .link .glyph {
+  order: -1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trigger:hover {
+    color: var(--color-primary);
+  }
+
+  .root > .link:hover {
+    background: var(--color-secondary);
+    color: var(--color-on-secondary);
+  }
+
+  .toneOnInk .trigger:hover {
+    color: var(--color-on-secondary);
+    filter: brightness(1.08);
+  }
+
+  .toneOnInk > .link:hover {
+    background: var(--color-on-secondary);
+    color: var(--color-secondary);
+    filter: none;
+  }
+
+  .panel > .link:hover {
+    color: var(--color-primary);
+    background: transparent;
+  }
+}

@@ -1,0 +1,14 @@
+.root {
+  will-change: transform;
+}
+
+.root[data-reduced="true"] {
+  will-change: auto;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,20 @@
+/* Keeps a popover inside the viewport via CSS Anchor Positioning.
+   Pair with useViewportPopAnchor() so each instance has a unique name. */
+
+.pop {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc(100% - 6px);
+  max-inline-size: min(16rem, calc(100vw - 24px));
+}
+
+@supports (anchor-name: --admin-pop) {
+  .pop {
+    position: fixed;
+    inset: auto;
+    inset-block-start: anchor(bottom);
+    inset-inline-start: anchor(start);
+    margin-block-start: -6px;
+    position-try-fallbacks: flip-inline, flip-block, flip-block flip-inline;
+  }
+}

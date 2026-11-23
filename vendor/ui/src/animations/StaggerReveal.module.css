@@ -1,0 +1,25 @@
+.root {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.item {
+  opacity: 0;
+  transform: translate3d(0, 2rem, 0);
+  transition:
+    opacity var(--duration-scroll, 900ms) var(--easing-out),
+    transform var(--duration-scroll, 900ms) var(--easing-out);
+}
+
+.item[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

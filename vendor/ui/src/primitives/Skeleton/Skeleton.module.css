@@ -1,0 +1,33 @@
+.root {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-sunken) 0%,
+    var(--color-surface) 45%,
+    var(--color-surface-sunken) 90%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: caka-shimmer var(--duration-slower, 1.2s) ease-in-out infinite;
+}
+
+.circle {
+  border-radius: var(--radius-full);
+  aspect-ratio: 1;
+}
+
+@keyframes caka-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+    background: var(--color-surface-sunken);
+  }
+}

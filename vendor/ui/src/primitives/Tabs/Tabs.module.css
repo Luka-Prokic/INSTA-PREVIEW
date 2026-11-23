@@ -1,0 +1,139 @@
+/* Mirrors NavBar chrome: glass capsule + sliding secondary thumb. */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.list {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--space-1);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-control, var(--radius-full));
+  background: var(--color-surface-glass);
+  backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  -webkit-backdrop-filter: saturate(1.4) blur(var(--blur-glass));
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  user-select: none;
+}
+
+.root[data-size="sm"] .list {
+  min-height: 2.25rem;
+}
+
+.root[data-size="md"] .list {
+  min-height: 2.75rem;
+}
+
+.thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--nav-thumb-left, 0);
+  width: var(--nav-thumb-width, 0);
+  z-index: 0;
+  height: calc(100% - (var(--space-1) * 2));
+  border-radius: var(--radius-control, var(--radius-full));
+  background: var(--color-secondary);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transform-origin: center;
+  transition:
+    left var(--duration-base) var(--easing-emphasized, var(--easing-standard)),
+    width var(--duration-base) var(--easing-emphasized, var(--easing-standard)),
+    transform var(--duration-base) var(--easing-emphasized, var(--easing-standard));
+}
+
+.thumbMoving {
+  transform: translateY(-50%) scaleY(0.94) scaleX(1.06);
+}
+
+.trigger {
+  appearance: none;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 2.5rem;
+  min-height: 2.25rem;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-control, var(--radius-full));
+  background: transparent;
+  color: var(--color-fg-muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.root[data-size="sm"] .trigger {
+  min-height: 1.85rem;
+  padding-inline: var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+.root[data-size="md"] .trigger {
+  min-height: 2.35rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .trigger:hover:not(:disabled):not([data-selected="true"]) {
+    color: var(--color-fg);
+    background: var(--color-hover);
+  }
+}
+
+.trigger[data-selected="true"] {
+  color: var(--color-on-secondary);
+  font-weight: var(--font-weight-bold);
+}
+
+.trigger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.trigger:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-bg),
+    0 0 0 4px var(--color-focus-ring);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.content {
+  min-inline-size: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thumb {
+    transition: none;
+  }
+
+  .thumbMoving {
+    transform: translateY(-50%);
+  }
+}

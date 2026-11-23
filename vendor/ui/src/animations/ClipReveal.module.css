@@ -1,0 +1,35 @@
+.root {
+  display: block;
+  min-inline-size: 0;
+}
+
+.face {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path var(--duration-scroll, 900ms) var(--easing-out);
+  will-change: clip-path;
+}
+
+.face[data-edge="up"] {
+  clip-path: inset(100% 0 0 0);
+}
+.face[data-edge="down"] {
+  clip-path: inset(0 0 100% 0);
+}
+.face[data-edge="left"] {
+  clip-path: inset(0 100% 0 0);
+}
+.face[data-edge="right"] {
+  clip-path: inset(0 0 0 100%);
+}
+
+.face[data-visible="true"],
+.face[data-reduced="true"] {
+  clip-path: inset(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face {
+    clip-path: none;
+    transition: none;
+  }
+}

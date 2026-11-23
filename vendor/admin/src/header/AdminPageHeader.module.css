@@ -1,0 +1,374 @@
+.wrap,
+.stickyWrap {
+  margin-block-end: var(--space-6);
+}
+
+.stickyWrap {
+  position: sticky;
+  top: var(--admin-bar, 0px);
+  z-index: 10;
+  margin-block-start: calc(-1 * var(--admin-gutter, var(--space-6)));
+  margin-inline: calc(-1 * var(--admin-gutter, var(--space-6)));
+  padding: var(--admin-gutter, var(--space-6)) var(--admin-gutter, var(--space-6)) var(--space-4);
+  background: rgba(var(--color-paper-rgb), 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.menuSlot {
+  display: none;
+}
+
+.header,
+.headerWithSearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.line {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.headerWithSearch {
+  display: grid;
+  grid-template-columns: auto minmax(0, max-content) 1fr auto;
+  align-items: center;
+  column-gap: var(--space-4);
+}
+
+.headerWithSearch .line {
+  grid-column: 1;
+  grid-row: 1;
+  flex: none;
+}
+
+.title {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  font: var(--type-title);
+  letter-spacing: var(--tracking-tight);
+}
+
+.titleText {
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  animation: admin-rise var(--t-focus) var(--ease-focus) both;
+}
+
+.titleText[data-placeholder] {
+  color: var(--color-ink-faint);
+}
+
+.titleHit {
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: start;
+  cursor: text;
+}
+
+.titleEdit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.titleInput {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  field-sizing: content;
+  min-inline-size: 7ch;
+  max-inline-size: 100%;
+}
+
+.titleInput:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.titleInput::placeholder {
+  color: var(--color-ink-faint);
+}
+
+.clear {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--color-ink-faint);
+  font: inherit;
+  font-size: 28px;
+  line-height: 1;
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  cursor: pointer;
+}
+
+@media (min-width: 721px) {
+  .clear:hover {
+    color: var(--color-ink);
+  }
+}
+
+.clear:focus-visible {
+  color: var(--color-ink);
+}
+
+.demoTag {
+  flex-shrink: 0;
+  font: var(--type-label);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.searchSlot {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  align-self: center;
+  min-inline-size: 0;
+  inline-size: clamp(7rem, 22vw, 15rem);
+}
+
+.stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.stacked .title {
+  align-self: flex-start;
+}
+
+.backRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-block-size: 44px;
+}
+
+.backRow .headerAction {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.back {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0;
+  max-inline-size: 40%;
+  min-inline-size: 0;
+  min-block-size: 44px;
+  margin-inline-start: -8px;
+  padding-inline-end: var(--space-2);
+  color: var(--color-ink);
+  font: var(--type-primary);
+}
+
+.back :global(.adminIcon) {
+  inline-size: 22px;
+  block-size: 22px;
+  flex-shrink: 0;
+}
+
+.backLabel {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform-origin: 0 50%;
+}
+
+.headerAction {
+  grid-column: 4;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.headerAction > * {
+  flex: none;
+}
+
+.addLabelMobile {
+  display: none;
+}
+
+.primaryAction {
+  border: 0;
+  background: none;
+  min-block-size: 44px;
+  padding: 0 2px;
+  color: var(--admin-blue);
+  font: var(--admin-row-type);
+  letter-spacing: var(--admin-row-tracking);
+  white-space: nowrap;
+}
+
+@media (min-width: 721px) {
+  .primaryAction:hover:not(:disabled) {
+    background: none;
+    color: var(--admin-blue);
+    opacity: 0.72;
+  }
+}
+
+.primaryAction:disabled {
+  cursor: not-allowed;
+}
+
+.primaryActionDisabled {
+  border: 0;
+  background: none;
+  min-block-size: 44px;
+  padding: 0 2px;
+  color: var(--color-ink-faint);
+  font: var(--admin-row-type);
+  letter-spacing: var(--admin-row-tracking);
+  white-space: nowrap;
+}
+
+.primaryActionDanger {
+  composes: primaryAction;
+  color: var(--admin-red);
+}
+
+@media (min-width: 721px) {
+  .primaryActionDanger:hover {
+    background: none;
+    color: var(--admin-red);
+    opacity: 0.72;
+  }
+}
+
+.primaryActionDanger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--color-ink-faint);
+  border-color: var(--color-ink-faint);
+}
+
+@media (max-width: 720px) {
+  .header,
+  .headerWithSearch {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-3);
+    flex-wrap: nowrap;
+  }
+
+  .line {
+    display: flex;
+    align-items: center;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .headerWithSearch .line {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .back {
+    flex: none;
+    max-inline-size: 42%;
+    min-inline-size: 0;
+  }
+
+  .title {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .backLabel {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Title | search (icon or field) … heart. Open find hides the action cluster. */
+  .headerWithSearch {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+  }
+
+  .searchSlot {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    inline-size: auto;
+    max-inline-size: none;
+    justify-self: start;
+  }
+
+  .headerWithSearch:has([data-open-find]) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .headerWithSearch:has([data-open-find]) .searchSlot {
+    justify-self: stretch;
+  }
+
+  .headerWithSearch:has([data-open-find]) .headerAction {
+    grid-column: 3;
+  }
+
+  .headerAction {
+    grid-column: 4;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+  }
+
+  .addLabelDesktop {
+    display: none;
+  }
+
+  .addLabelMobile {
+    display: inline;
+  }
+}

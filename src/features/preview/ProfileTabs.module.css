@@ -1,0 +1,53 @@
+.tabs {
+  display: flex;
+  border-top: 1px solid var(--ig-border, #dbdbdb);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 44px;
+  border: 0;
+  border-top: 1px solid transparent;
+  margin-top: -1px;
+  background: transparent;
+  color: var(--ig-secondary, #737373);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab[data-active="true"] {
+  color: var(--ig-fg, #000);
+  border-top-color: var(--ig-fg, #000);
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.iconOnly .label {
+  display: none;
+}
+
+/* Mobile profile: underline under the active icon (IG app) */
+.iconOnly {
+  border-top: 0;
+  border-bottom: 1px solid var(--ig-border, #dbdbdb);
+}
+
+.iconOnly .tab {
+  border-top: 0;
+  border-bottom: 1px solid transparent;
+  margin-top: 0;
+  margin-bottom: -1px;
+}
+
+.iconOnly .tab[data-active="true"] {
+  border-bottom-color: var(--ig-fg, #000);
+}

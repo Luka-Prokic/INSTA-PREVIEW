@@ -1,0 +1,30 @@
+.track {
+  position: relative;
+  display: grid;
+  gap: var(--space-8);
+  width: 100%;
+  min-inline-size: 0;
+}
+
+@media (min-width: 769px) {
+  .track {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+}
+
+.sticky {
+  position: sticky;
+  top: var(--sticky-top, 12vh);
+  z-index: 1;
+  align-self: start;
+  min-inline-size: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  min-inline-size: 0;
+  padding-block: var(--space-8) var(--space-16);
+}
