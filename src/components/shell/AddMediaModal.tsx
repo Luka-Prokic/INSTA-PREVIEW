@@ -1,6 +1,6 @@
 "use client";
 
-import { ChoiceGroup, useAdminNotice } from "@/lib/caka-admin";
+import { ChoiceGroup } from "@/lib/caka-admin";
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 import { extractVideoFrame, focusToObjectPosition, loadImageFile } from "@/features/planner/media";
@@ -17,19 +17,16 @@ type Kind = PlannedItem["kind"];
 export function AddMediaModal({
   open,
   onOpenChange,
-  defaultKind,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultKind: Kind;
 }) {
   const { addPlanned } = useWorkspace();
-  const { showNotice } = useAdminNotice();
   const presence = usePresence(open);
   const scrollRef = useRef<HTMLDivElement>(null);
   const onWheel = useForwardWheelScroll(scrollRef);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [kind, setKind] = useState<Kind>(defaultKind);
+  const [kind, setKind] = useState<Kind>("image");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [name, setName] = useState("");
@@ -37,13 +34,10 @@ export function AddMediaModal({
   const [focusY, setFocusY] = useState(0.5);
   const [busy, setBusy] = useState(false);
   const [drop, setDrop] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const drag = useRef<{ x: number; y: number; fx: number; fy: number } | null>(null);
   const previewUrlRef = useRef<string | null>(null);
   previewUrlRef.current = previewUrl;
-
-  useEffect(() => {
-    if (open) setKind(defaultKind);
-  }, [defaultKind, open]);
 
   useEffect(() => {
     if (presence.mounted) return;
@@ -54,7 +48,9 @@ export function AddMediaModal({
     setName("");
     setFocusX(0.5);
     setFocusY(0.5);
+    setKind("image");
     setDrop(false);
+    setError(null);
   }, [presence.mounted]);
 
   useEffect(() => {
@@ -78,37 +74,36 @@ export function AddMediaModal({
     setName("");
     setFocusX(0.5);
     setFocusY(0.5);
-    setKind(defaultKind);
+    setKind("image");
+    setError(null);
   };
 
-  const onFile = useCallback(
-    async (file: File | null | undefined) => {
-      if (!file) return;
-      setBusy(true);
-      try {
-        if (file.type.startsWith("video/")) {
-          const frame = await extractVideoFrame(file);
-          setPreviewUrl(frame.url);
-          setBlob(frame.blob);
-          setName(file.name);
-          setKind("reel");
-        } else if (file.type.startsWith("image/")) {
-          const image = await loadImageFile(file);
-          setPreviewUrl(image.url);
-          setBlob(file);
-          setName(file.name);
-        } else {
-          showNotice({ message: "Use an image or video file." });
-        }
-      } catch (error) {
-        showNotice({ message: error instanceof Error ? error.message : "Could not read that file." });
-      } finally {
-        setBusy(false);
-        setDrop(false);
+  const onFile = useCallback(async (file: File | null | undefined) => {
+    if (!file) return;
+    setBusy(true);
+    setError(null);
+    try {
+      if (file.type.startsWith("video/")) {
+        const frame = await extractVideoFrame(file);
+        setPreviewUrl(frame.url);
+        setBlob(frame.blob);
+        setName(file.name);
+        setKind("reel");
+      } else if (file.type.startsWith("image/")) {
+        const image = await loadImageFile(file);
+        setPreviewUrl(image.url);
+        setBlob(file);
+        setName(file.name);
+      } else {
+        setError("Use an image or video file.");
       }
-    },
-    [showNotice],
-  );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not read that file.");
+    } finally {
+      setBusy(false);
+      setDrop(false);
+    }
+  }, []);
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -131,6 +126,7 @@ export function AddMediaModal({
   const submit = async () => {
     if (!blob || !previewUrl) return;
     setBusy(true);
+    setError(null);
     try {
       const id = `planned-${crypto.randomUUID()}`;
       await addPlanned(
@@ -145,21 +141,15 @@ export function AddMediaModal({
         },
         blob,
       );
-      showNotice({ message: kind === "reel" ? "Reel added to the grid." : "Post added to the grid." });
       onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not add that file.");
     } finally {
       setBusy(false);
     }
   };
 
   if (!presence.mounted || typeof document === "undefined") return null;
-
-  const title = defaultKind === "reel" ? "Add Reel" : "Add post";
-  const accept = defaultKind === "reel" ? "image/*,video/*" : "image/*";
-  const uploadLabel =
-    busy ? "Reading…"
-    : defaultKind === "reel" ? "Upload image or video"
-    : "Upload image";
 
   return createPortal(
     <div
@@ -178,24 +168,18 @@ export function AddMediaModal({
         onClick={(e) => e.stopPropagation()}
       >
         <header className={shell.modalHeader}>
-          <h2 id="add-media-title">{title}</h2>
+          <h2 id="add-media-title">Add</h2>
           <div className={shell.modalHeaderActions}>
             <button type="button" className={shell.modalSecondary} onClick={() => onOpenChange(false)}>
               Cancel
             </button>
             <button type="button" className={shell.modalPrimary} onClick={() => void submit()} disabled={!blob || busy}>
-              {busy ? "Saving…" : "Insert into grid"}
+              {busy ? "Saving…" : "Insert"}
             </button>
           </div>
         </header>
 
         <div ref={scrollRef} className={shell.modalPad} data-modal-scroll>
-          <p className={shell.modalLede}>
-            {defaultKind === "reel" ?
-              "Add a Reel frame to the preview grid. Drag the crop to set the focal point."
-            : "Add a post to the preview grid. Drag the crop to set the focal point."}
-          </p>
-
           <div className={`${shell.modalBody} ${styles.mediaField}`}>
             {!previewUrl ?
               <button
@@ -215,7 +199,7 @@ export function AddMediaModal({
                   void onFile(event.dataTransfer.files?.[0] ?? null);
                 }}
               >
-                <span className={styles.uploadLabel}>{uploadLabel}</span>
+                <span className={styles.uploadLabel}>{busy ? "Reading…" : "Upload image or video"}</span>
                 <span className={styles.uploadHint}>Drop a file here, or choose one</span>
               </button>
             : <figure className={styles.preview}>
@@ -237,10 +221,9 @@ export function AddMediaModal({
                 </div>
                 <div className={styles.meta}>
                   <p className={styles.metaTitle}>Grid crop (3:4)</p>
-                  <p className={styles.metaHint}>Drag the image to set the focal point.</p>
                   {name ? <p className={styles.fileName}>{name}</p> : null}
                   <label className={styles.kindField}>
-                    Post type
+                    Type
                     <ChoiceGroup
                       ariaLabel="Post type"
                       value={kind}
@@ -264,11 +247,17 @@ export function AddMediaModal({
               </figure>
             }
 
+            {error ?
+              <p className={shell.modalError} role="alert">
+                {error}
+              </p>
+            : null}
+
             <input
               ref={inputRef}
               className={styles.file}
               type="file"
-              accept={accept}
+              accept="image/*,video/*"
               tabIndex={-1}
               aria-hidden
               onChange={(e) => {

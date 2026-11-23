@@ -111,6 +111,11 @@ export function getActiveDeviceLabel(
   return { name: device.name, subtitle: device.subtitle };
 }
 
+function centerSlide(viewport: HTMLElement, slide: HTMLElement, behavior: ScrollBehavior) {
+  const left = Math.max(0, slide.offsetLeft + slide.offsetWidth / 2 - viewport.clientWidth / 2);
+  viewport.scrollTo({ left, behavior });
+}
+
 export function DeviceCarousel({
   snapshot,
   planned,
@@ -150,7 +155,9 @@ export function DeviceCarousel({
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef(new Map<string, HTMLDivElement>());
-  const ignoreScrollSync = useRef(false);
+  /** True while we programmatically center — don't fight scroll with selection sync. */
+  const programmaticScroll = useRef(false);
+  const didMount = useRef(false);
 
   const setSlideRef = useCallback((id: string, node: HTMLDivElement | null) => {
     if (node) slideRefs.current.set(id, node);
@@ -169,27 +176,24 @@ export function DeviceCarousel({
     [setPhoneModelId, setViewMode],
   );
 
-  // Sidebar / click only — don't re-center after a user scroll (snap already did).
-  const didMount = useRef(false);
-  const skipCenterRef = useRef(false);
+  // Sidebar / external selection → center active slide.
   useLayoutEffect(() => {
-    if (skipCenterRef.current) {
-      skipCenterRef.current = false;
-      return;
-    }
+    const viewport = viewportRef.current;
     const slide = slideRefs.current.get(active);
-    if (!slide) return;
-    ignoreScrollSync.current = true;
-    slide.scrollIntoView({
-      inline: "center",
-      block: "nearest",
-      behavior: didMount.current ? "smooth" : "auto",
-    });
+    if (!viewport || !slide) return;
+
+    const behavior: ScrollBehavior = didMount.current ? "smooth" : "auto";
     didMount.current = true;
-    const t = window.setTimeout(() => {
-      ignoreScrollSync.current = false;
-    }, 400);
-    return () => window.clearTimeout(t);
+    programmaticScroll.current = true;
+    centerSlide(viewport, slide, behavior);
+
+    const clear = window.setTimeout(
+      () => {
+        programmaticScroll.current = false;
+      },
+      behavior === "smooth" ? 450 : 50,
+    );
+    return () => window.clearTimeout(clear);
   }, [active]);
 
   useLayoutEffect(() => {
@@ -198,7 +202,7 @@ export function DeviceCarousel({
     const sync = () => {
       viewport.style.setProperty(
         "--carousel-h",
-        `${Math.max(0, viewport.clientHeight - 48)}px`,
+        `${Math.max(0, viewport.clientHeight - 96)}px`,
       );
     };
     sync();
@@ -225,35 +229,128 @@ export function DeviceCarousel({
       return best?.id ?? null;
     };
 
-    const onScrollEnd = () => {
-      if (ignoreScrollSync.current) return;
+    const settleToNearest = () => {
+      if (programmaticScroll.current) return;
       const id = nearest();
-      if (!id || id === activeRef.current) return;
-      skipCenterRef.current = true;
-      select(id);
+      if (!id) return;
+      const slide = slideRefs.current.get(id);
+      if (slide) {
+        programmaticScroll.current = true;
+        centerSlide(viewport, slide, "smooth");
+        window.setTimeout(() => {
+          programmaticScroll.current = false;
+        }, 420);
+      }
+      if (id !== activeRef.current) select(id);
     };
 
-    let snapTimer: ReturnType<typeof setTimeout> | null = null;
+    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+    const onScroll = () => {
+      if (programmaticScroll.current) return;
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(settleToNearest, 120);
+    };
+
+    const onScrollEnd = () => {
+      if (settleTimer) clearTimeout(settleTimer);
+      settleToNearest();
+    };
+
+    /**
+     * Horizontal only — never map vertical trackpad/wheel into the strip.
+     * Shift+vertical is the mouse shortcut for horizontal scroll.
+     */
     const onWheel = (event: WheelEvent) => {
-      if (!(event.target instanceof Node) || !viewport.contains(event.target)) return;
-      if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
-      if (event.deltaX === 0) return;
+      let dx = event.deltaX;
+      let dy = event.deltaY;
+      if (event.deltaMode === 1) {
+        dx *= 16;
+        dy *= 16;
+      } else if (event.deltaMode === 2) {
+        dx *= viewport.clientWidth;
+        dy *= viewport.clientHeight;
+      }
+
+      const delta = event.shiftKey ? dy || dx : dx;
+      if (delta === 0) return;
+      // Ignore mostly-vertical gestures (keep feed / page vertical).
+      if (!event.shiftKey && Math.abs(dy) > Math.abs(dx) * 1.25) return;
+
       event.preventDefault();
-      viewport.style.scrollSnapType = "none";
-      viewport.scrollLeft += event.deltaX;
-      if (snapTimer) clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => {
-        viewport.style.scrollSnapType = "";
-      }, 120);
+      viewport.scrollLeft += delta;
     };
 
+    // Horizontal drag to scrub; clicks still select.
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startScroll = 0;
+    let dragging = false;
+    const DRAG = 8;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      const t = event.target;
+      if (
+        t instanceof Element &&
+        t.closest("[data-capture-feed], button, a, [role='tab']")
+      ) {
+        return;
+      }
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startScroll = viewport.scrollLeft;
+      dragging = false;
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (pointerId !== event.pointerId) return;
+      const dist = event.clientX - startX;
+      if (!dragging && Math.abs(dist) < DRAG) return;
+      if (!dragging) {
+        dragging = true;
+        viewport.setPointerCapture(event.pointerId);
+      }
+      viewport.scrollLeft = startScroll - dist;
+    };
+
+    const onPointerUp = (event: PointerEvent) => {
+      if (pointerId !== event.pointerId) return;
+      const wasDrag = dragging;
+      pointerId = null;
+      dragging = false;
+      try {
+        viewport.releasePointerCapture(event.pointerId);
+      } catch {
+        /* ok */
+      }
+      if (wasDrag) {
+        settleToNearest();
+        return;
+      }
+      const el = document.elementFromPoint(event.clientX, event.clientY);
+      const slide = el instanceof Element ? el.closest("[data-device-slide]") : null;
+      const id = slide?.getAttribute("data-device-slide") as PreviewDeviceId | null;
+      if (id && id !== activeRef.current) select(id);
+    };
+
+    viewport.addEventListener("scroll", onScroll, { passive: true });
     viewport.addEventListener("scrollend", onScrollEnd);
+    // capture so trackpad wheel reaches us even over nested preview nodes
     viewport.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    viewport.addEventListener("pointerdown", onPointerDown);
+    viewport.addEventListener("pointermove", onPointerMove);
+    viewport.addEventListener("pointerup", onPointerUp);
+    viewport.addEventListener("pointercancel", onPointerUp);
+
     return () => {
+      viewport.removeEventListener("scroll", onScroll);
       viewport.removeEventListener("scrollend", onScrollEnd);
       viewport.removeEventListener("wheel", onWheel, true);
-      if (snapTimer) clearTimeout(snapTimer);
-      viewport.style.scrollSnapType = "";
+      viewport.removeEventListener("pointerdown", onPointerDown);
+      viewport.removeEventListener("pointermove", onPointerMove);
+      viewport.removeEventListener("pointerup", onPointerUp);
+      viewport.removeEventListener("pointercancel", onPointerUp);
+      if (settleTimer) clearTimeout(settleTimer);
     };
   }, [select, devices]);
 
@@ -271,12 +368,10 @@ export function DeviceCarousel({
               key={device.id}
               ref={(node) => setSlideRef(device.id, node)}
               className={styles.slide}
+              data-device-slide={device.id}
               data-active={isActive || undefined}
               role="group"
               aria-label={device.name}
-              onClick={() => {
-                if (!isActive) select(device.id);
-              }}
             >
               {device.kind === "phone" ?
                 <div
@@ -287,7 +382,7 @@ export function DeviceCarousel({
                   <MobileProfile
                     snapshot={snapshot}
                     planned={planned}
-                    editMode={editMode}
+                    editMode={editMode && isActive}
                     tab={tab}
                     onTabChange={onTabChange}
                     phoneModelId={device.id}
@@ -295,6 +390,10 @@ export function DeviceCarousel({
                     variant="slide"
                     gridOrder={gridOrder}
                   />
+                  <p className={styles.dimLabel} aria-hidden={isActive || undefined}>
+                    {device.name}
+                    <span className={styles.dimSub}>{device.subtitle}</span>
+                  </p>
                 </div>
               : device.kind === "bare" ?
                 <div
@@ -304,12 +403,16 @@ export function DeviceCarousel({
                   <MobileProfile
                     snapshot={snapshot}
                     planned={planned}
-                    editMode={editMode}
+                    editMode={editMode && isActive}
                     tab={tab}
                     onTabChange={onTabChange}
                     variant="bare"
                     gridOrder={gridOrder}
                   />
+                  <p className={styles.dimLabel} aria-hidden={isActive || undefined}>
+                    {device.name}
+                    <span className={styles.dimSub}>{device.subtitle}</span>
+                  </p>
                 </div>
               : <div
                   className={styles.screenSlot}
@@ -318,18 +421,18 @@ export function DeviceCarousel({
                   <DesktopProfile
                     snapshot={snapshot}
                     planned={planned}
-                    editMode={editMode}
+                    editMode={editMode && isActive}
                     tab={tab}
                     onTabChange={onTabChange}
                     chrome={device.chrome}
                     gridOrder={gridOrder}
                   />
+                  <p className={styles.dimLabel} aria-hidden={isActive || undefined}>
+                    {device.name}
+                    <span className={styles.dimSub}>{device.subtitle}</span>
+                  </p>
                 </div>
               }
-              <p className={styles.dimLabel} aria-hidden={!isActive ? undefined : true}>
-                {device.name}
-                <span className={styles.dimSub}>{device.subtitle}</span>
-              </p>
             </div>
           );
         })}

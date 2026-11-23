@@ -176,11 +176,22 @@ export function MobileProfile({
     if (!stage) return;
     const update = () => {
       const life = phoneActualScale(model);
-      setScale(Number.isFinite(life) && life > 0 ? life : 1);
+      let next = Number.isFinite(life) && life > 0 ? life : 1;
+      // Fit inside carousel height so Safari doesn't clip the chassis/shadows.
+      if (variant === "slide") {
+        const raw = getComputedStyle(stage).getPropertyValue("--carousel-h").trim();
+        const maxH = Number.parseFloat(raw);
+        if (Number.isFinite(maxH) && maxH > 0) {
+          next = Math.min(next, maxH / outer.height);
+        }
+      }
+      setScale(Number.isFinite(next) && next > 0 ? next : 1);
     };
     update();
     const ro = new ResizeObserver(update);
     ro.observe(stage);
+    const slot = stage.parentElement;
+    if (slot) ro.observe(slot);
     window.addEventListener("resize", update);
     return () => {
       ro.disconnect();
@@ -241,9 +252,10 @@ export function MobileProfile({
     >
       <div
         className={styles.scaleSlot}
+        data-capture-scale-slot
         style={{ width: outer.width * scale, height: outer.height * scale }}
       >
-        <div className={styles.phone} data-face={model.face} style={phoneStyle}>
+        <div className={styles.phone} data-face={model.face} data-capture-phone style={phoneStyle}>
           {model.buttons.silent != null ?
             <span className={styles.btnSilent} aria-hidden />
           : null}

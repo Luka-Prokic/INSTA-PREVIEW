@@ -147,6 +147,13 @@
   color: color-mix(in srgb, var(--color-ink) 45%, transparent);
 }
 
+.error {
+  margin: 4px 12px 8px;
+  font: var(--type-secondary);
+  color: var(--color-error, #c0392b);
+  word-break: break-word;
+}
+
 .back {
   display: flex;
   align-items: center;

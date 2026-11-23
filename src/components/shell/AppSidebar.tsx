@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useWorkspace } from "@/features/planner/store";
 import { AddMediaModal } from "./AddMediaModal";
 import { ManualImportModal } from "./ManualImportModal";
-import { AddPostIcon, AddReelIcon } from "./PlanIcons";
+import { AddPostIcon } from "./PlanIcons";
 import { FlipToggle } from "./FlipToggle";
 import { PhoneControls } from "./PhoneControls";
 import { PlannedList } from "./PlannedList";
@@ -28,7 +28,7 @@ export function AppSidebar() {
     editMode,
     setEditMode,
   } = useWorkspace();
-  const [addKind, setAddKind] = useState<"image" | "reel" | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [clearArmed, setClearArmed] = useState(false);
   const contentCount = (snapshot?.fields.media.value?.length ?? 0) + planned.length;
   const contentEmpty = contentCount === 0;
@@ -56,35 +56,33 @@ export function AppSidebar() {
     <aside className={styles.sidebar}>
       <div className={sideStyles.layers} data-rail={!sidebarOpen || undefined}>
         <div className={sideStyles.rail} aria-hidden={sidebarOpen || undefined} inert={sidebarOpen || undefined}>
-          <button type="button" className={styles.iconBtn} aria-label="Expand sidebar" onClick={() => setSidebarOpen(true)}>
-            <IonIcon name="menu-outline" />
-          </button>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            aria-label="Connect profile"
-            onClick={() => setConnectOpen(true)}
-          >
-            <IonIcon name="link-outline" />
-          </button>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            aria-label="Add post"
-            disabled={!snapshot}
-            onClick={() => setAddKind("image")}
-          >
-            <AddPostIcon />
-          </button>
-          <button
-            type="button"
-            className={styles.iconBtn}
-            aria-label="Add Reel"
-            disabled={!snapshot}
-            onClick={() => setAddKind("reel")}
-          >
-            <AddReelIcon />
-          </button>
+          <div className={sideStyles.railActions}>
+            <button type="button" className={sideStyles.railIcon} aria-label="Expand sidebar" onClick={() => setSidebarOpen(true)}>
+              <IonIcon name="menu-outline" />
+            </button>
+            <button
+              type="button"
+              className={sideStyles.railIcon}
+              aria-label="Connect profile"
+              onClick={() => setConnectOpen(true)}
+            >
+              <IonIcon name="link-outline" />
+            </button>
+            <button
+              type="button"
+              className={sideStyles.railIcon}
+              aria-label="Add content"
+              disabled={!snapshot}
+              onClick={() => setAddOpen(true)}
+            >
+              <AddPostIcon />
+            </button>
+          </div>
+          {!contentEmpty ?
+            <div className={sideStyles.railContent}>
+              <PlannedList variant="rail" />
+            </div>
+          : null}
         </div>
 
         <div className={sideStyles.inner} aria-hidden={!sidebarOpen || undefined} inert={!sidebarOpen || undefined}>
@@ -141,18 +139,10 @@ export function AppSidebar() {
               <SidebarSection title="Plan">
                 <ul className={styles.card}>
                   <li>
-                    <button type="button" className={styles.row} disabled={!snapshot} onClick={() => setAddKind("image")}>
+                    <button type="button" className={styles.row} disabled={!snapshot} onClick={() => setAddOpen(true)}>
                       <span className={styles.rowLabel}>
                         <AddPostIcon />
-                        Add post
-                      </span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" className={styles.row} disabled={!snapshot} onClick={() => setAddKind("reel")}>
-                      <span className={styles.rowLabel}>
-                        <AddReelIcon />
-                        Add Reel
+                        Add
                       </span>
                     </button>
                   </li>
@@ -193,13 +183,7 @@ export function AppSidebar() {
         </div>
       </div>
 
-      <AddMediaModal
-        open={addKind !== null}
-        onOpenChange={(o) => {
-          if (!o) setAddKind(null);
-        }}
-        defaultKind={addKind ?? "image"}
-      />
+      <AddMediaModal open={addOpen} onOpenChange={setAddOpen} />
       <ManualImportModal open={profileEditOpen} onOpenChange={setProfileEditOpen} />
     </aside>
   );

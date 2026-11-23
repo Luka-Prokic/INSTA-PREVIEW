@@ -13,14 +13,32 @@ function Cellular() {
   );
 }
 
-/** iOS Wi-Fi. */
+/** iOS Wi-Fi — three arcs + dot (stroke, not filled wedges). */
 function Wifi() {
   return (
     <svg className={styles.icon} width="16" height="12" viewBox="0 0 16 12" aria-hidden>
       <path
-        d="M8 9.7a1.35 1.35 0 1 1 0 2.7 1.35 1.35 0 0 1 0-2.7Zm-3.55-2.45a5.1 5.1 0 0 1 7.1 0l-1.1 1.15a3.5 3.5 0 0 0-4.9 0L4.45 7.25Zm-2.45-2.5a8.45 8.45 0 0 1 12 0l-1.1 1.15a6.9 6.9 0 0 0-9.8 0L2 4.75ZM.45 2.3a11.6 11.6 0 0 1 15.1 0l-1.1 1.15a10 10 0 0 0-12.9 0L.45 2.3Z"
-        fill="currentColor"
+        d="M1.2 4.05a9.2 9.2 0 0 1 13.6 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
       />
+      <path
+        d="M3.35 6.15a6.15 6.15 0 0 1 9.3 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+      <path
+        d="M5.55 8.2a3.1 3.1 0 0 1 4.9 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+      />
+      <circle cx="8" cy="10.35" r="1.05" fill="currentColor" />
     </svg>
   );
 }

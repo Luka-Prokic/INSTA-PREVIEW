@@ -1,6 +1,6 @@
 "use client";
 
-import { IonIcon, useAdminNotice } from "@/lib/caka-admin";
+import { IonIcon } from "@/lib/caka-admin";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { buildSharePayload } from "@/features/share/buildSharePayload";
@@ -48,10 +48,10 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
     setViewMode,
     setPhoneModelId,
   } = useWorkspace();
-  const { showNotice } = useAdminNotice();
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>("root");
   const [busy, setBusy] = useState<"link" | "image" | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
   const [menuHeight, setMenuHeight] = useState<number | null>(null);
   const [heightReady, setHeightReady] = useState(false);
@@ -103,7 +103,7 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
   useLayoutEffect(() => {
     if (!presence.mounted) return;
     measureHeight();
-  }, [panel, busy, presence.mounted, measureHeight]);
+  }, [panel, busy, error, presence.mounted, measureHeight]);
 
   useEffect(() => {
     const inner = innerRef.current;
@@ -136,7 +136,10 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
   }, [open]);
 
   useEffect(() => {
-    if (!open) setPanel("root");
+    if (!open) {
+      setPanel("root");
+      setError(null);
+    }
   }, [open]);
 
   const ensureSelected = (id: PreviewDeviceId) => {
@@ -151,6 +154,7 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
   const onCopyLink = async () => {
     if (!snapshot || busy) return;
     setBusy("link");
+    setError(null);
     try {
       const payload = await buildSharePayload({
         snapshot,
@@ -173,15 +177,14 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
       const absolute = new URL(data.url, window.location.origin).toString();
       try {
         await navigator.clipboard.writeText(absolute);
-        showNotice({ message: "Share link copied." });
       } catch {
-        showNotice({ message: absolute });
+        setError(absolute);
+        setBusy(null);
+        return;
       }
       setOpen(false);
-    } catch (error) {
-      showNotice({
-        message: error instanceof Error ? error.message : "Share failed.",
-      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Share failed.");
     } finally {
       setBusy(null);
     }
@@ -190,6 +193,7 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
   const onDownload = async (deviceId: PreviewDeviceId) => {
     if (!snapshot || busy) return;
     setBusy("image");
+    setError(null);
     try {
       await downloadDeviceImage({
         deviceId,
@@ -197,12 +201,10 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
         activeId,
         ensureSelected,
       });
-      showNotice({ message: "Preview image downloaded." });
       setOpen(false);
-    } catch (error) {
-      showNotice({
-        message: error instanceof Error ? error.message : "Could not capture preview.",
-      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not capture preview.";
+      setError(message || "Could not capture preview.");
     } finally {
       setBusy(null);
     }
@@ -259,6 +261,11 @@ export function ShareButton({ variant = "row" }: { variant?: "row" | "icon" }) {
             style={menuHeight ? { height: menuHeight } : undefined}
           >
             <div ref={innerRef} className={styles.inner}>
+              {error ?
+                <p className={styles.error} role="alert">
+                  {error}
+                </p>
+              : null}
               {panel === "root" ?
                 <>
                   <button

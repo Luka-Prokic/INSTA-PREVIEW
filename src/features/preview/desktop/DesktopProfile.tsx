@@ -95,7 +95,7 @@ export function DesktopProfile({
           </div>
         </aside>
 
-        <div className={styles.main}>
+        <div className={styles.main} data-capture-feed>
           <div className={styles.header}>
             <div className={styles.avatarWrap} data-story={snapshot.hasStory || undefined}>
               <SharedImage image={f.avatar.value} alt="" className={styles.avatar} />
@@ -166,8 +166,8 @@ export function DesktopProfile({
 
   if (chrome === "macbook") {
     return (
-      <div className={styles.macbook}>
-        <div className={styles.macLid}>
+      <div className={styles.macbook} data-capture-device="macbook">
+        <div className={styles.macLid} data-capture-panel>
           <div className={styles.macBezel}>
             <span className={styles.macCamera} aria-hidden />
             <div className={styles.macScreen}>{content}</div>
@@ -181,8 +181,8 @@ export function DesktopProfile({
   }
 
   return (
-    <div className={styles.monitor}>
-      <div className={styles.monitorBezel}>
+    <div className={styles.monitor} data-capture-device="monitor">
+      <div className={styles.monitorBezel} data-capture-panel>
         <div className={styles.monitorScreen}>{content}</div>
       </div>
       <div className={styles.monitorNeck} aria-hidden />

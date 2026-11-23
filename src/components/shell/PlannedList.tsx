@@ -75,14 +75,47 @@ function SortableRow({
   );
 }
 
+function SortableRailTile({ item }: { item: GridItem }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+  });
+  // Vertical-only — horizontal drag was shoving tiles out of the narrow rail.
+  const style = {
+    transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined,
+    transition,
+    opacity: isDragging ? 0.85 : 1,
+    zIndex: isDragging ? 2 : undefined,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={styles.railItem}
+      data-dragging={isDragging || undefined}
+      {...attributes}
+      {...listeners}
+    >
+      <SharedImage image={item.image} alt="" className={styles.railThumb} />
+      {item.kind === "reel" || item.kind === "video" ?
+        <span className={styles.railBadge} aria-hidden />
+      : null}
+      {item.kind === "carousel" ?
+        <span className={styles.railLayers} aria-hidden />
+      : null}
+    </li>
+  );
+}
+
 /** Sidebar Content list — full DnD; order drives the preview grid. */
-export function PlannedList() {
+export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" }) {
   const { planned, snapshot, gridOrder, reorderGrid, removePlanned } = useWorkspace();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const items = mergeGrid(snapshot?.fields.media.value, planned, "posts", gridOrder);
   const plannedNames = new Map(planned.map((p) => [p.id, p.name]));
 
   if (items.length === 0) {
+    if (variant === "rail") return null;
     return <p className={shell.muted}>No content yet. Connect a profile or add a post.</p>;
   }
 
@@ -99,20 +132,27 @@ export function PlannedList() {
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-        <ul className={styles.list}>
-          {items.map((item) => (
-            <SortableRow
-              key={item.id}
-              item={item}
-              label={
-                item.source === "planned" ?
-                  (plannedNames.get(item.id) ?? kindLabel(item.kind))
-                : kindLabel(item.kind)
-              }
-              onRemove={item.source === "planned" ? (id) => void removePlanned(id) : undefined}
-            />
-          ))}
-        </ul>
+        {variant === "rail" ?
+          <ul className={styles.railList} aria-label="Content order">
+            {items.map((item) => (
+              <SortableRailTile key={item.id} item={item} />
+            ))}
+          </ul>
+        : <ul className={styles.list}>
+            {items.map((item) => (
+              <SortableRow
+                key={item.id}
+                item={item}
+                label={
+                  item.source === "planned" ?
+                    (plannedNames.get(item.id) ?? kindLabel(item.kind))
+                  : kindLabel(item.kind)
+                }
+                onRemove={item.source === "planned" ? (id) => void removePlanned(id) : undefined}
+              />
+            ))}
+          </ul>
+        }
       </SortableContext>
     </DndContext>
   );
