@@ -4,8 +4,11 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
+  type UIEvent,
   type WheelEvent,
 } from "react";
 import type { ImageRef, ProfileSnapshot } from "@/features/import/types";
@@ -37,6 +40,18 @@ function slidesFor(item: GridItem): ImageRef[] {
 
 function isReel(item: GridItem) {
   return item.kind === "reel" || item.kind === "video";
+}
+
+/** Instagram feed clamps roughly 4:5 … 1.91:1; reels stay 9:16. */
+function clampPostAspect(width: number, height: number) {
+  const raw = width / height;
+  return Math.min(1.91, Math.max(4 / 5, raw));
+}
+
+function defaultAspect(item: GridItem) {
+  if (isReel(item)) return 9 / 16;
+  if (item.width && item.height) return clampPostAspect(item.width, item.height);
+  return 1;
 }
 
 function ActionRow() {
@@ -83,6 +98,142 @@ function MobileChrome({
   );
 }
 
+function MobileReelViewer({
+  reelItems,
+  reelIndex,
+  items,
+  snapshot,
+  statusBarH,
+  face,
+  homeIndicator,
+  username,
+  verified,
+  avatar,
+  onIndexChange,
+  onClose,
+  stopWheel,
+}: {
+  reelItems: GridItem[];
+  reelIndex: number;
+  items: GridItem[];
+  snapshot: ProfileSnapshot;
+  statusBarH: number;
+  face: PhoneFace;
+  homeIndicator: boolean;
+  username: string;
+  verified: boolean;
+  avatar: ImageRef | undefined;
+  onIndexChange: (index: number) => void;
+  onClose: () => void;
+  stopWheel: (event: WheelEvent) => void;
+}) {
+  const pagerRef = useRef<HTMLDivElement>(null);
+  const scrolling = useRef(false);
+
+  useEffect(() => {
+    const pager = pagerRef.current;
+    if (!pager) return;
+    const page = pager.children[reelIndex] as HTMLElement | undefined;
+    if (!page) return;
+    scrolling.current = true;
+    pager.scrollTop = page.offsetTop;
+    const t = window.setTimeout(() => {
+      scrolling.current = false;
+    }, 80);
+    return () => window.clearTimeout(t);
+  }, [reelIndex, reelItems.length]);
+
+  const onPagerScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
+      if (scrolling.current) return;
+      const pager = event.currentTarget;
+      const pageH = pager.clientHeight || 1;
+      const next = Math.round(pager.scrollTop / pageH);
+      const clamped = Math.max(0, Math.min(reelItems.length - 1, next));
+      if (clamped === reelIndex) return;
+      const reel = reelItems[clamped];
+      if (!reel) return;
+      const globalIndex = items.findIndex((i) => i.id === reel.id);
+      if (globalIndex >= 0) onIndexChange(globalIndex);
+    },
+    [items, onIndexChange, reelIndex, reelItems],
+  );
+
+  return (
+    <div
+      className={`ig ${styles.overlay} ${styles.overlayReel}`}
+      data-media-viewer
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Reel by ${username}`}
+      onWheel={stopWheel}
+    >
+      <MobileChrome statusBarH={statusBarH} face={face} homeIndicator={homeIndicator}>
+        <div className={`${styles.topBar} ${styles.topBarReel}`}>
+          <button type="button" className={styles.iconBtn} aria-label="Back" onClick={onClose}>
+            <BackIcon />
+          </button>
+          <p className={styles.title}>Reels</p>
+          <button type="button" className={styles.iconBtn} aria-label="More">
+            <MoreIcon />
+          </button>
+        </div>
+
+        <div
+          ref={pagerRef}
+          className={styles.reelPager}
+          onScroll={onPagerScroll}
+        >
+          {reelItems.map((reel) => {
+            const caption =
+              reel.source === "planned" ? "Planned Reel preview"
+              : (snapshot.fields.displayName.value ?? username);
+            return (
+              <div key={reel.id} className={styles.reelPage}>
+                <SharedImage
+                  image={slidesFor(reel)[0]}
+                  alt=""
+                  className={`${styles.media} ${styles.mediaCover}`}
+                />
+                <div className={styles.reelSide}>
+                  <button type="button" className={styles.reelSideBtn} aria-label="Like">
+                    <HeartIcon />
+                    <span>Like</span>
+                  </button>
+                  <button type="button" className={styles.reelSideBtn} aria-label="Comment">
+                    <CommentIcon />
+                    <span>0</span>
+                  </button>
+                  <button type="button" className={styles.reelSideBtn} aria-label="Share">
+                    <SharePostIcon />
+                    <span>Share</span>
+                  </button>
+                  <button type="button" className={styles.reelSideBtn} aria-label="More">
+                    <MoreIcon />
+                  </button>
+                </div>
+                <div className={styles.reelBottom}>
+                  <div className={styles.reelUserRow}>
+                    <SharedImage image={avatar} alt="" className={styles.reelAvatar} />
+                    <p className={styles.reelUser}>
+                      {username}
+                      {verified ? <VerifiedBadge size={12} /> : null}
+                    </p>
+                    <button type="button" className={styles.reelFollow}>
+                      Follow
+                    </button>
+                  </div>
+                  <p className={styles.reelCaption}>{caption}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </MobileChrome>
+    </div>
+  );
+}
+
 export function MediaViewer({
   items,
   index,
@@ -107,11 +258,27 @@ export function MediaViewer({
   const item = items[index];
   const slides = useMemo(() => (item ? slidesFor(item) : []), [item]);
   const [slide, setSlide] = useState(0);
+  const [measuredAr, setMeasuredAr] = useState<number | null>(null);
   const reel = item ? isReel(item) : false;
+  const mediaAr = measuredAr ?? (item ? defaultAspect(item) : 1);
+  const mediaStyle = { "--media-ar": String(mediaAr) } as CSSProperties;
 
   useEffect(() => {
     setSlide(0);
+    setMeasuredAr(null);
   }, [item?.id]);
+
+  useEffect(() => {
+    setMeasuredAr(null);
+  }, [slide]);
+
+  const onNaturalSize = useCallback(
+    (size: { width: number; height: number }) => {
+      if (!item || isReel(item)) return;
+      setMeasuredAr(clampPostAspect(size.width, size.height));
+    },
+    [item],
+  );
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -200,11 +367,15 @@ export function MediaViewer({
           className={[styles.dialog, reel ? styles.dialogReel : ""].filter(Boolean).join(" ")}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className={[styles.dialogMedia, reel ? styles.dialogMediaReel : ""].filter(Boolean).join(" ")}>
+          <div
+            className={[styles.dialogMedia, reel ? styles.dialogMediaReel : ""].filter(Boolean).join(" ")}
+            style={reel ? undefined : mediaStyle}
+          >
             <SharedImage
               image={slides[slide]}
               alt=""
               className={[styles.media, reel ? styles.mediaCover : ""].filter(Boolean).join(" ")}
+              onNaturalSize={onNaturalSize}
             />
             {reel ?
               <button type="button" className={styles.muteBtn} aria-label="Toggle mute">
@@ -286,63 +457,30 @@ export function MediaViewer({
     );
   }
 
-  /* —— Mobile reel —— */
+  /* —— Mobile reel (vertical snap pager like the app) —— */
   if (reel) {
-    return (
-      <div
-        className={`ig ${styles.overlay} ${styles.overlayReel}`}
-        data-media-viewer
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Reel by ${username}`}
-        onWheel={stopWheel}
-      >
-        <MobileChrome statusBarH={statusBarH} face={face} homeIndicator={homeIndicator}>
-          <div className={`${styles.topBar} ${styles.topBarReel}`}>
-            <button type="button" className={styles.iconBtn} aria-label="Back" onClick={onClose}>
-              <BackIcon />
-            </button>
-            <p className={styles.title}>Reels</p>
-            <button type="button" className={styles.iconBtn} aria-label="More">
-              <MoreIcon />
-            </button>
-          </div>
+    const reelItems = items.filter(isReel);
+    const reelIndex = Math.max(
+      0,
+      reelItems.findIndex((r) => r.id === item.id),
+    );
 
-          <div className={`${styles.mediaWrap} ${styles.mediaWrapReel}`}>
-            <SharedImage image={slides[0]} alt="" className={`${styles.media} ${styles.mediaCover}`} />
-            <div className={styles.reelSide}>
-              <button type="button" className={styles.reelSideBtn} aria-label="Like">
-                <HeartIcon />
-                <span>Like</span>
-              </button>
-              <button type="button" className={styles.reelSideBtn} aria-label="Comment">
-                <CommentIcon />
-                <span>0</span>
-              </button>
-              <button type="button" className={styles.reelSideBtn} aria-label="Share">
-                <SharePostIcon />
-                <span>Share</span>
-              </button>
-              <button type="button" className={styles.reelSideBtn} aria-label="More">
-                <MoreIcon />
-              </button>
-            </div>
-            <div className={styles.reelBottom}>
-              <div className={styles.reelUserRow}>
-                <SharedImage image={avatar} alt="" className={styles.reelAvatar} />
-                <p className={styles.reelUser}>
-                  {username}
-                  {verified ? <VerifiedBadge size={12} /> : null}
-                </p>
-                <button type="button" className={styles.reelFollow}>
-                  Follow
-                </button>
-              </div>
-              <p className={styles.reelCaption}>{caption}</p>
-            </div>
-          </div>
-        </MobileChrome>
-      </div>
+    return (
+      <MobileReelViewer
+        reelItems={reelItems}
+        reelIndex={reelIndex}
+        items={items}
+        snapshot={snapshot}
+        statusBarH={statusBarH}
+        face={face}
+        homeIndicator={homeIndicator}
+        username={username}
+        verified={Boolean(verified)}
+        avatar={avatar}
+        onIndexChange={onIndexChange}
+        onClose={onClose}
+        stopWheel={stopWheel}
+      />
     );
   }
 
@@ -368,8 +506,13 @@ export function MediaViewer({
         </div>
 
         <div className={styles.body}>
-          <div className={styles.mediaWrap}>
-            <SharedImage image={slides[slide]} alt="" className={styles.media} />
+          <div className={styles.mediaWrap} style={mediaStyle}>
+            <SharedImage
+              image={slides[slide]}
+              alt=""
+              className={styles.media}
+              onNaturalSize={onNaturalSize}
+            />
             {slides.length > 1 ?
               <>
                 <button

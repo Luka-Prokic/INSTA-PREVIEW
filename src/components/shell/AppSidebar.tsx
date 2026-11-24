@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useWorkspace } from "@/features/planner/store";
 import { AddMediaModal } from "./AddMediaModal";
 import { ManualImportModal } from "./ManualImportModal";
-import { AddPostIcon } from "./PlanIcons";
+import { AddPostIcon, MenuEqualsIcon } from "./PlanIcons";
 import { FlipToggle } from "./FlipToggle";
 import { PhoneControls } from "./PhoneControls";
 import { PlannedList } from "./PlannedList";
@@ -59,19 +59,11 @@ export function AppSidebar() {
         <div className={sideStyles.rail} aria-hidden={sidebarOpen || undefined} inert={sidebarOpen || undefined}>
           <div className={sideStyles.railActions}>
             <button type="button" className={sideStyles.railIcon} aria-label="Expand sidebar" onClick={() => setSidebarOpen(true)}>
-              <IonIcon name="menu-outline" />
+              <MenuEqualsIcon />
             </button>
             <button
               type="button"
-              className={sideStyles.railIcon}
-              aria-label="Connect profile"
-              onClick={() => setConnectOpen(true)}
-            >
-              <IonIcon name="link-outline" />
-            </button>
-            <button
-              type="button"
-              className={sideStyles.railIcon}
+              className={`${sideStyles.railIcon} ${sideStyles.railAdd}`}
               aria-label="Add content"
               disabled={!snapshot}
               onClick={() => setAddOpen(true)}

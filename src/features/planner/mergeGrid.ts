@@ -94,6 +94,8 @@ function toPublished(m: PublishedMedia, pinned: boolean): GridItem {
     source: "published",
     pinned,
     viewCount: m.viewCount,
+    width: m.width,
+    height: m.height,
   };
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type SyntheticEvent } from "react";
 import type { ImageRef } from "@/features/import/types";
 import { resolveImageUrl } from "@/features/planner/persistence";
 
@@ -9,11 +9,13 @@ export function SharedImage({
   alt,
   className,
   style,
+  onNaturalSize,
 }: {
   image: ImageRef | undefined;
   alt: string;
   className?: string;
   style?: CSSProperties;
+  onNaturalSize?: (size: { width: number; height: number }) => void;
 }) {
   const [src, setSrc] = useState<string | null>(image?.kind === "remote" ? image.url : null);
 
@@ -35,6 +37,22 @@ export function SharedImage({
     };
   }, [image]);
 
+  const onLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    const img = event.currentTarget;
+    if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+      onNaturalSize?.({ width: img.naturalWidth, height: img.naturalHeight });
+    }
+  };
+
   if (!src) return <div className={className} style={{ background: "#efefef", ...style }} aria-hidden />;
-  return <img src={src} alt={alt} className={className} style={style} draggable={false} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+      draggable={false}
+      onLoad={onLoad}
+    />
+  );
 }

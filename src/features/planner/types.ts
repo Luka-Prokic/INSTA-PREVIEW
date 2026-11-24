@@ -35,4 +35,7 @@ export type GridItem = {
   focusX?: number;
   focusY?: number;
   viewCount?: number;
+  /** Native media size when known (drives viewer aspect ratio). */
+  width?: number;
+  height?: number;
 };
