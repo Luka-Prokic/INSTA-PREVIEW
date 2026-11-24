@@ -143,6 +143,7 @@
   flex-direction: column;
   gap: 24px;
   perspective: 800px;
+  overflow: visible;
 }
 
 .card {

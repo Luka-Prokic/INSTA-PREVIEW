@@ -1,0 +1,33 @@
+.leading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-inline-size: 0;
+}
+
+.leading > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.mark :global(.adminIcon) {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+/* Decorative segment — the row button owns the click (CAKA SettingsForms). */
+.segment {
+  pointer-events: none;
+  cursor: default;
+}

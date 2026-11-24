@@ -89,6 +89,10 @@ export type ManualOverrides = {
   media?: PublishedMedia[];
   /** Published media ids pinned to the top of the grid (max 3, in order). */
   pinnedIds?: string[];
+  /** Override published media kinds in the preview (id → kind). */
+  mediaKinds?: Record<string, MediaKind>;
+  /** Published media ids hidden from the preview grid. */
+  hiddenMediaIds?: string[];
   /** Show the Instagram “active story” ring on the profile photo. */
   hasStory?: boolean;
 };

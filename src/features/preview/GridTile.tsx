@@ -37,16 +37,14 @@ export function GridTile({
       />
       <div className={styles.hover} />
       {item.pinned ?
-        <span className={styles.pin}>
+        <span className={styles.badge} aria-label="Pinned">
           <PinIcon />
         </span>
-      : null}
-      {item.kind === "carousel" ?
+      : item.kind === "carousel" ?
         <span className={styles.badge}>
           <CarouselIcon />
         </span>
-      : null}
-      {(item.kind === "reel" || item.kind === "video") && variant === "posts" ?
+      : (item.kind === "reel" || item.kind === "video") && variant === "posts" ?
         <span className={styles.badge}>
           <ReelBadgeIcon />
         </span>

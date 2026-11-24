@@ -11,6 +11,7 @@ import { PhoneControls } from "./PhoneControls";
 import { PlannedList } from "./PlannedList";
 import { SettingsCards } from "./SettingsCards";
 import { SidebarSection } from "./SidebarSection";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Shell.module.css";
 import sideStyles from "./AppSidebar.module.css";
 
@@ -178,6 +179,8 @@ export function AppSidebar() {
               </SidebarSection>
 
               <PhoneControls />
+
+              <ThemeToggle />
             </SettingsCards>
           </div>
         </div>

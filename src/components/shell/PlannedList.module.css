@@ -1,39 +1,55 @@
 .list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 4px 2px 8px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  overflow: visible;
+  perspective: 800px;
+}
+
+.itemWrap {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: grab;
+  touch-action: none;
+  overflow: visible;
+}
+
+.itemWrap:active,
+.itemWrap[data-dragging] {
+  cursor: grabbing;
 }
 
 .item {
   display: grid;
-  grid-template-columns: 18px 40px 1fr auto;
+  grid-template-columns: 18px 40px 1fr;
   align-items: center;
   gap: 10px;
   padding: 6px;
   border-radius: var(--admin-card-radius);
   background: color-mix(in srgb, var(--color-paper-accent) 50%, transparent);
   border: var(--hairline);
-  cursor: grab;
+  overflow: visible;
+  transform-style: flat !important;
+  will-change: auto !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.item:active {
-  cursor: grabbing;
+.item[data-active] {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 35%, transparent);
 }
 
 .handle {
-  border: 0;
-  background: transparent;
+  display: grid;
+  place-items: center;
   color: var(--color-ink-faint);
-  cursor: grab;
-  padding: 0;
-}
-
-.handleSpacer {
-  width: 18px;
-  height: 18px;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .thumb {
@@ -42,6 +58,7 @@
   object-fit: cover;
   background: var(--color-field);
   border-radius: 2px;
+  pointer-events: none;
 }
 
 .meta {
@@ -49,6 +66,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  pointer-events: none;
 }
 
 .name {
@@ -102,6 +120,18 @@
   object-fit: cover;
   background: var(--color-field);
   pointer-events: none;
+}
+
+.railPin {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: #fff;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.45);
+  transform: rotate(45deg);
 }
 
 .railBadge {

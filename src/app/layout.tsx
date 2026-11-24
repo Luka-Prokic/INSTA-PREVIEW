@@ -19,10 +19,14 @@ export const metadata: Metadata = {
   applicationName: "INSTA PREVIEW",
 };
 
+const themeBootstrap =
+  '(function(){try{var t=localStorage.getItem("caka.admin.theme");document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}})()';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={bartle.variable} data-theme="light" suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

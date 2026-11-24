@@ -13,7 +13,8 @@ import {
 import { clearCredentials, loadCredentials, saveCredentials } from "@/features/import/credentials";
 import { applyManual, emptySnapshot } from "@/features/import/mergeSnapshot";
 import { importProfile } from "@/features/import/importService";
-import type { ManualOverrides, ProfileSnapshot } from "@/features/import/types";
+import type { ManualOverrides, MediaKind, ProfileSnapshot } from "@/features/import/types";
+import { MAX_PINNED } from "@/features/import/types";
 import { normalizeUsername } from "@/features/import/username";
 import {
   clearWorkspace,
@@ -32,7 +33,7 @@ import {
   type PhoneScaleMode,
 } from "@/features/preview/devices";
 import { mergeGrid, reconcileGridOrder } from "./mergeGrid";
-import type { PlannedItem, PreviewTab, ViewMode } from "./types";
+import type { PlannedItem, PlannedKind, PreviewTab, ViewMode } from "./types";
 
 type Status = "idle" | "loading" | "ready" | "error";
 
@@ -82,6 +83,9 @@ type Actions = {
   reorderPlanned: (orderedIds: string[]) => void;
   reorderGrid: (orderedIds: string[]) => void;
   updatePlanned: (id: string, patch: Partial<PlannedItem>) => void;
+  setItemKind: (id: string, kind: PlannedKind) => void;
+  setItemPinned: (id: string, pinned: boolean) => void;
+  removeGridItem: (id: string) => Promise<void>;
 };
 
 const initial: State = {
@@ -434,6 +438,88 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     [persist, store],
   );
 
+  const seedPinnedIds = useCallback((): string[] => {
+    const { manual, snapshot, planned } = store.get();
+    if (manual.pinnedIds) return [...manual.pinnedIds];
+    const fromPub = (snapshot?.fields.media.value ?? []).filter((m) => m.pinned).map((m) => m.id);
+    const fromPlan = planned.filter((p) => p.pinned).map((p) => p.id);
+    return [...fromPub, ...fromPlan];
+  }, [store]);
+
+  const setItemKind = useCallback(
+    (id: string, kind: PlannedKind) => {
+      const { planned, manual } = store.get();
+      if (planned.some((p) => p.id === id)) {
+        store.set({
+          planned: planned.map((p) => (p.id === id ? { ...p, kind } : p)),
+        });
+        persist();
+        return;
+      }
+      const mediaKinds = { ...manual.mediaKinds, [id]: kind as MediaKind };
+      const next = { ...manual, mediaKinds };
+      const snap = store.get().snapshot;
+      store.set({
+        manual: next,
+        snapshot: snap ? applyManual(snap, next) : snap,
+      });
+      persist();
+    },
+    [persist, store],
+  );
+
+  const setItemPinned = useCallback(
+    (id: string, pinned: boolean) => {
+      const { planned, manual, snapshot } = store.get();
+      let ids = seedPinnedIds().filter((x) => x !== id);
+      if (pinned) ids = [id, ...ids].slice(0, MAX_PINNED);
+
+      const nextPlanned = planned.map((p) => ({
+        ...p,
+        pinned: ids.includes(p.id) ? true : undefined,
+      }));
+      const plannedIds = new Set(nextPlanned.map((p) => p.id));
+      const nextManual: ManualOverrides = {
+        ...manual,
+        pinnedIds: ids.filter((x) => !plannedIds.has(x)),
+      };
+      store.set({
+        planned: nextPlanned,
+        manual: nextManual,
+        snapshot: snapshot ? applyManual(snapshot, nextManual) : snapshot,
+      });
+      persist();
+    },
+    [persist, seedPinnedIds, store],
+  );
+
+  const removeGridItem = useCallback(
+    async (id: string) => {
+      const { planned, manual, snapshot, gridOrder } = store.get();
+      if (planned.some((p) => p.id === id)) {
+        await removePlanned(id);
+        return;
+      }
+      const hiddenMediaIds = [...new Set([...(manual.hiddenMediaIds ?? []), id])];
+      const pinnedIds = (manual.pinnedIds ?? seedPinnedIds()).filter((x) => x !== id);
+      const mediaKinds = { ...manual.mediaKinds };
+      delete mediaKinds[id];
+      const next: ManualOverrides = {
+        ...manual,
+        hiddenMediaIds,
+        pinnedIds,
+        mediaKinds: Object.keys(mediaKinds).length ? mediaKinds : undefined,
+      };
+      store.set({
+        manual: next,
+        snapshot: snapshot ? applyManual(snapshot, next) : snapshot,
+        gridOrder: gridOrder ? gridOrder.filter((x) => x !== id) : null,
+      });
+      persist();
+    },
+    [persist, removePlanned, seedPinnedIds, store],
+  );
+
   const actions = useMemo<Actions>(
     () => ({
       setUsernameInput: (v) => store.set({ usernameInput: v }),
@@ -473,6 +559,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       reorderPlanned,
       reorderGrid,
       updatePlanned,
+      setItemKind,
+      setItemPinned,
+      removeGridItem,
     }),
     [
       addPlanned,
@@ -481,10 +570,13 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       loadProfile,
       persist,
       reloadProfile,
+      removeGridItem,
       removePlanned,
       reorderGrid,
       reorderPlanned,
       clearPreview,
+      setItemKind,
+      setItemPinned,
       setManual,
       startBlankProfile,
       store,

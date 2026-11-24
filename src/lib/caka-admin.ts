@@ -5,3 +5,9 @@ export { IonIcon } from "../../vendor/admin/src/icons/Icon";
 export type { IonName } from "../../vendor/admin/src/icons/Icon";
 export { usePointerTilt, motionReduced } from "../../vendor/admin/src/motion/usePointerTilt";
 export { mountPointerSwipe } from "../../vendor/admin/src/motion/pointerSwipe";
+export {
+  ADMIN_THEME_KEY,
+  applyAdminTheme,
+  readStoredAdminTheme,
+} from "../../vendor/admin/src/preferences";
+export type { AdminTheme } from "../../vendor/admin/src/preferences";

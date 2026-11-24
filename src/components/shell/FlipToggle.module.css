@@ -74,6 +74,10 @@
   --index: 1;
 }
 
+.root:not([data-ready]) .thumb {
+  opacity: 0;
+}
+
 .root[data-live] .thumb,
 .root[data-live] .thumb > .faces {
   transition: transform 280ms var(--ease-out, ease);

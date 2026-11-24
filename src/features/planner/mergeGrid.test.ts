@@ -58,6 +58,23 @@ describe("mergeGrid", () => {
     ]);
   });
 
+  it("keeps pins at the top even when order mixes them with unpinned", () => {
+    const published = [img("a"), img("b", true), img("c"), img("d", true)];
+    const planned = [plan("p1")];
+    expect(
+      mergeGrid(published, planned, "posts", ["a", "d", "p1", "b", "c"]).map((i) => i.id),
+    ).toEqual(["d", "b", "a", "p1", "c"]);
+  });
+
+  it("reorders pins only among themselves via order", () => {
+    const published = [img("a", true), img("b", true), img("c")];
+    expect(mergeGrid(published, [], "posts", ["b", "a", "c"]).map((i) => i.id)).toEqual([
+      "b",
+      "a",
+      "c",
+    ]);
+  });
+
   it("returns an empty tagged tab", () => {
     expect(mergeGrid([img("a")], [plan("p")], "tagged")).toEqual([]);
   });

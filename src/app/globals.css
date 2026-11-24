@@ -8,11 +8,15 @@ body {
 
 html {
   height: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 body {
   min-height: 100%;
   height: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 #__next,

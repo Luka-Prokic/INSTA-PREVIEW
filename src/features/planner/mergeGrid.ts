@@ -32,8 +32,9 @@ export function reconcileGridOrder(
 }
 
 /**
- * Instagram-like default: up to 3 pinned, then planned, then published.
- * When `order` is set (sidebar DnD), that order wins for the posts tab.
+ * Instagram-like default: up to 3 pinned (published + planned), then planned, then published.
+ * Custom `order` reorders within the pinned block and within the unpinned block only —
+ * pins always stay at the top.
  */
 export function mergeGrid(
   published: PublishedMedia[] | undefined,
@@ -45,29 +46,42 @@ export function mergeGrid(
 
   if (tab === "tagged") return [];
 
-  const pinned = pub
+  const pinnedPub = pub
     .filter((m) => m.pinned)
-    .slice(0, MAX_PINNED)
     .map((m) => toPublished(m, true));
+  const pinnedPlan = planned
+    .filter((p) => p.pinned)
+    .map((p) => toPlanned(p, true));
+  const pinned = applyGridOrder([...pinnedPub, ...pinnedPlan].slice(0, MAX_PINNED), order);
   const pinnedIds = new Set(pinned.map((p) => p.id));
 
-  const plannedItems: GridItem[] = planned.map((p) => ({
-    id: p.id,
-    kind: p.kind,
-    image: p.image,
-    source: "planned" as const,
-    focusX: p.focusX,
-    focusY: p.focusY,
-  }));
+  const plannedItems: GridItem[] = planned
+    .filter((p) => !pinnedIds.has(p.id))
+    .map((p) => toPlanned(p, false));
 
-  const rest = pub.filter((m) => !pinnedIds.has(m.id)).map((m) => toPublished(m, false));
-  const posts = applyGridOrder([...pinned, ...plannedItems, ...rest], order);
+  const rest = pub
+    .filter((m) => !pinnedIds.has(m.id))
+    .map((m) => toPublished(m, false));
+  const unpinned = applyGridOrder([...plannedItems, ...rest], order);
+  const posts = [...pinned, ...unpinned];
 
   if (tab === "reels") {
     return posts.filter((item) => item.kind === "reel" || item.kind === "video");
   }
 
   return posts;
+}
+
+function toPlanned(p: PlannedItem, pinned: boolean): GridItem {
+  return {
+    id: p.id,
+    kind: p.kind,
+    image: p.image,
+    source: "planned",
+    pinned: pinned || undefined,
+    focusX: p.focusX,
+    focusY: p.focusY,
+  };
 }
 
 function toPublished(m: PublishedMedia, pinned: boolean): GridItem {

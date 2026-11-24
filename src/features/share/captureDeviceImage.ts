@@ -39,33 +39,91 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 const TRANSPARENT_PIXEL =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
+/** Draw an already-decoded <img> to a data URL (works for blob:/same-origin). */
+function canvasFromImage(img: HTMLImageElement): string | null {
+  try {
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    if (!w || !h) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0);
+    return canvas.toDataURL("image/jpeg", 0.92);
+  } catch {
+    // Tainted canvas (cross-origin without CORS) — caller falls back to fetch.
+    return null;
+  }
+}
+
+async function fetchToDataUrl(src: string): Promise<string | null> {
+  try {
+    let fetchUrl = src;
+    if (/^https?:\/\//i.test(src) && !src.startsWith(window.location.origin)) {
+      fetchUrl = `/api/media?url=${encodeURIComponent(src)}`;
+    }
+    const res = await fetch(fetchUrl);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    // IndexedDB / blob: responses often have an empty MIME — still encode them.
+    if (blob.type && !blob.type.startsWith("image/") && blob.type !== "application/octet-stream") {
+      return null;
+    }
+    return blobToDataUrl(blob);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Replace every <img> src with an embedded data URL so html-to-image never
+ * hits CORS / expired CDN URLs. Prefer the already-decoded bitmap on screen.
+ */
 async function inlineImages(root: HTMLElement): Promise<() => void> {
   const imgs = Array.from(root.querySelectorAll("img"));
-  const backups: { img: HTMLImageElement; src: string }[] = [];
+  const backups: { img: HTMLImageElement; src: string; srcset: string }[] = [];
+  const cache = new Map<string, string>();
 
   await Promise.all(
     imgs.map(async (img) => {
       const src = img.currentSrc || img.getAttribute("src") || "";
       if (!src || src.startsWith("data:")) return;
-      backups.push({ img, src });
-      try {
-        let fetchUrl = src;
-        if (/^https?:\/\//i.test(src) && !src.startsWith(window.location.origin)) {
-          fetchUrl = `/api/media?url=${encodeURIComponent(src)}`;
+      backups.push({ img, src: img.getAttribute("src") || src, srcset: img.getAttribute("srcset") || "" });
+
+      let dataUrl = cache.get(src) ?? null;
+      if (!dataUrl) {
+        if (img.complete && img.naturalWidth > 0) {
+          dataUrl = canvasFromImage(img);
         }
-        const res = await fetch(fetchUrl);
-        if (!res.ok) throw new Error(`image ${res.status}`);
-        const blob = await res.blob();
-        if (!blob.type.startsWith("image/")) throw new Error("not an image");
-        img.src = await blobToDataUrl(blob);
-      } catch {
-        img.src = TRANSPARENT_PIXEL;
+        if (!dataUrl) dataUrl = await fetchToDataUrl(src);
+        if (dataUrl) cache.set(src, dataUrl);
       }
+
+      img.removeAttribute("srcset");
+      img.src = dataUrl ?? TRANSPARENT_PIXEL;
     }),
   );
 
+  await Promise.all(
+    imgs.map(
+      (img) =>
+        img.complete ?
+          Promise.resolve()
+        : new Promise<void>((resolve) => {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          }),
+    ),
+  );
+
   return () => {
-    for (const { img, src } of backups) img.src = src;
+    for (const { img, src, srcset } of backups) {
+      img.src = src;
+      if (srcset) img.setAttribute("srcset", srcset);
+      else img.removeAttribute("srcset");
+    }
   };
 }
 
@@ -225,6 +283,8 @@ async function rasterizeFullDevice(subject: HTMLElement): Promise<string> {
 
   try {
     await waitForCloneImages(clone);
+    // Re-inline on the clone in case cloneNode dropped long data URLs / blob refs.
+    await inlineImages(clone);
     await new Promise((r) => window.requestAnimationFrame(() => r(undefined)));
 
     const captureH =
@@ -237,11 +297,13 @@ async function rasterizeFullDevice(subject: HTMLElement): Promise<string> {
       clone.style.height = `${captureH}px`;
     }
 
+    // Images are already data URLs — cacheBust must stay off (it mangled srcs and
+    // blanked posts / avatar / highlights).
     const dataUrl = await toPng(clone, {
       width,
       height: captureH,
       pixelRatio: Math.min(2, window.devicePixelRatio || 2),
-      cacheBust: true,
+      cacheBust: false,
       skipFonts: true,
       imagePlaceholder: TRANSPARENT_PIXEL,
       style: {

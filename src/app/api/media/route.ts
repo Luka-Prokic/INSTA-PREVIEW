@@ -2,7 +2,13 @@ import { type NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_HOSTS = ["cdninstagram.com", "fbcdn.net"];
+const ALLOWED_HOSTS = [
+  "cdninstagram.com",
+  "fbcdn.net",
+  "instagram.com",
+  "cdn.fbsbx.com",
+  "scontent.instagram.com",
+];
 
 function allowed(url: URL): boolean {
   return (

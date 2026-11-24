@@ -428,7 +428,7 @@
   width: 134px;
   height: 5px;
   border-radius: 999px;
-  background: #000;
+  background: var(--ig-fg);
 }
 
 .navAvatar {
@@ -436,5 +436,5 @@
   height: 24px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid #000;
+  border: 1.5px solid var(--ig-fg);
 }

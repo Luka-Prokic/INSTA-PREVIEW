@@ -74,9 +74,23 @@ export function applyManual(snapshot: ProfileSnapshot, manual: ManualOverrides):
   if (media.status === "unavailable" && manual.media?.length) {
     media = { status: "manual", value: manual.media, source: "manual" };
   }
-  if (media.value && manual.pinnedIds) {
-    const pinned = new Set(manual.pinnedIds);
-    media = { ...media, value: media.value.map((m) => ({ ...m, pinned: pinned.has(m.id) })) };
+  if (media.value) {
+    let list = media.value;
+    if (manual.hiddenMediaIds?.length) {
+      const hidden = new Set(manual.hiddenMediaIds);
+      list = list.filter((m) => !hidden.has(m.id));
+    }
+    if (manual.mediaKinds) {
+      list = list.map((m) => {
+        const kind = manual.mediaKinds?.[m.id];
+        return kind && kind !== m.kind ? { ...m, kind } : m;
+      });
+    }
+    if (manual.pinnedIds) {
+      const pinned = new Set(manual.pinnedIds);
+      list = list.map((m) => ({ ...m, pinned: pinned.has(m.id) }));
+    }
+    if (list !== media.value) media = { ...media, value: list };
   }
 
   const highlights =

@@ -18,9 +18,11 @@ export function FlipToggle({
   ariaLabel: string;
 }) {
   const index = value === options[1].value ? 1 : 0;
+  const [ready, setReady] = useState(false);
   const [live, setLive] = useState(false);
 
   useEffect(() => {
+    setReady(true);
     const id = window.requestAnimationFrame(() => setLive(true));
     return () => window.cancelAnimationFrame(id);
   }, []);
@@ -33,6 +35,7 @@ export function FlipToggle({
       aria-checked={index === 1}
       aria-label={`${ariaLabel}, ${options[index].label}`}
       data-index={index}
+      data-ready={ready || undefined}
       data-live={live || undefined}
       onClick={() => onChange(options[index === 0 ? 1 : 0].value)}
     >

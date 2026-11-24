@@ -1,15 +1,18 @@
-/* Instagram preview tokens — scoped, independent of CAKA-UI. */
+/* Instagram preview tokens — scoped, independent of CAKA-UI.
+ * Light: IGDS white canvas + #262626 ink.
+ * Dark: Prism near-black (#0C1014), not OLED pure black — matches current app / web. */
 .ig {
   --ig-bg: #ffffff;
-  --ig-fg: #000000;
-  --ig-secondary: #737373;
+  --ig-fg: #262626;
+  --ig-secondary: #8e8e8e;
   --ig-link: #00376b;
   --ig-primary: #0095f6;
   --ig-primary-hover: #1877f2;
   --ig-button: #efefef;
-  --ig-button-fg: #000000;
+  --ig-button-fg: #262626;
   --ig-border: #dbdbdb;
   --ig-hairline: #efefef;
+  --ig-elevated: #fafafa;
   --ig-story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   --ig-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --ig-gap: 1px;
@@ -19,6 +22,19 @@
   font-family: var(--ig-font);
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+}
+
+html[data-theme="dark"] .ig {
+  /* IGDS / Prism — stock app & web; not AMOLED #000 */
+  --ig-bg: #0c1014;
+  --ig-fg: #f5f5f5;
+  --ig-secondary: #a8a8a8;
+  --ig-link: #e0f1ff;
+  --ig-button: #262626;
+  --ig-button-fg: #f5f5f5;
+  --ig-border: #262626;
+  --ig-hairline: #262626;
+  --ig-elevated: #0c1014;
 }
 
 .ig *,
