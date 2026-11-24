@@ -2,10 +2,15 @@
   position: relative;
   display: block;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
   aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #efefef;
-  cursor: default;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
 }
 
 .tileReels {

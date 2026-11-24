@@ -7,6 +7,8 @@ export type PlannedItem = {
   kind: PlannedKind;
   /** Local blob key or remote URL used as the grid cover. */
   image: ImageRef;
+  /** Extra carousel pages when kind is carousel. */
+  slides?: ImageRef[];
   /** Original file name, for the sidebar list. */
   name: string;
   createdAt: number;
@@ -27,6 +29,7 @@ export type GridItem = {
   id: string;
   kind: MediaKind;
   image: ImageRef;
+  slides?: ImageRef[];
   source: "planned" | "published";
   pinned?: boolean;
   focusX?: number;

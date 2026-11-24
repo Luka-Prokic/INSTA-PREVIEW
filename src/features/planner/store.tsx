@@ -438,9 +438,22 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     [persist, store],
   );
 
+  /** Newest-first pin order (published + planned). Used for the 3-pin FIFO cap. */
   const seedPinnedIds = useCallback((): string[] => {
     const { manual, snapshot, planned } = store.get();
-    if (manual.pinnedIds) return [...manual.pinnedIds];
+    const pubIds = new Set((snapshot?.fields.media.value ?? []).map((m) => m.id));
+    const planIds = new Set(planned.map((p) => p.id));
+    const exists = (id: string) => pubIds.has(id) || planIds.has(id);
+
+    if (manual.pinnedIds !== undefined) {
+      // Stored order wins; still include planned pins that were only flagged on the item
+      // (legacy / before we kept planned ids in pinnedIds).
+      const stored = manual.pinnedIds.filter(exists);
+      const storedSet = new Set(stored);
+      const orphanPlan = planned.filter((p) => p.pinned && !storedSet.has(p.id)).map((p) => p.id);
+      return [...stored, ...orphanPlan];
+    }
+
     const fromPub = (snapshot?.fields.media.value ?? []).filter((m) => m.pinned).map((m) => m.id);
     const fromPlan = planned.filter((p) => p.pinned).map((p) => p.id);
     return [...fromPub, ...fromPlan];
@@ -471,17 +484,22 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const setItemPinned = useCallback(
     (id: string, pinned: boolean) => {
       const { planned, manual, snapshot } = store.get();
+      // Newest first. Pinning a 4th drops the oldest (end of the list) — FIFO.
       let ids = seedPinnedIds().filter((x) => x !== id);
-      if (pinned) ids = [id, ...ids].slice(0, MAX_PINNED);
+      if (pinned) {
+        ids = [id, ...ids];
+        if (ids.length > MAX_PINNED) ids = ids.slice(0, MAX_PINNED);
+      }
 
+      const pinnedSet = new Set(ids);
       const nextPlanned = planned.map((p) => ({
         ...p,
-        pinned: ids.includes(p.id) ? true : undefined,
+        pinned: pinnedSet.has(p.id) ? true : undefined,
       }));
-      const plannedIds = new Set(nextPlanned.map((p) => p.id));
+      // Keep the full ordered list (planned + published) so the next pin sees all 3.
       const nextManual: ManualOverrides = {
         ...manual,
-        pinnedIds: ids.filter((x) => !plannedIds.has(x)),
+        pinnedIds: ids,
       };
       store.set({
         planned: nextPlanned,

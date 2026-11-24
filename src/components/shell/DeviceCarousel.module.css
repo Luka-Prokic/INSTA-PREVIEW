@@ -78,8 +78,8 @@
   pointer-events: none;
 }
 
-.slide[data-active] :is(button, a, [role="tab"], [data-capture-feed]),
-.slide[data-active] :is(button, a, [role="tab"], [data-capture-feed]) * {
+.slide[data-active] :is(button, a, [role="tab"], [data-capture-feed], [data-media-viewer]),
+.slide[data-active] :is(button, a, [role="tab"], [data-capture-feed], [data-media-viewer]) * {
   pointer-events: auto;
 }
 

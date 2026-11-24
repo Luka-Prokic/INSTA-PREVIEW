@@ -111,10 +111,22 @@ export function getActiveDeviceLabel(
   return { name: device.name, subtitle: device.subtitle };
 }
 
-function centerSlide(viewport: HTMLElement, slide: HTMLElement, behavior: ScrollBehavior) {
-  const left = Math.max(0, slide.offsetLeft + slide.offsetWidth / 2 - viewport.clientWidth / 2);
-  viewport.scrollTo({ left, behavior });
+/** Target scrollLeft so `slide`’s center sits on the viewport’s center. */
+function targetScrollLeft(viewport: HTMLElement, slide: HTMLElement): number {
+  const vRect = viewport.getBoundingClientRect();
+  const sRect = slide.getBoundingClientRect();
+  const delta = sRect.left + sRect.width / 2 - (vRect.left + vRect.width / 2);
+  const max = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+  return Math.min(max, Math.max(0, viewport.scrollLeft + delta));
 }
+
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
+}
+
+/** Quiet after last scroll input before we ease the active slide to center. */
+const SCROLL_IDLE_MS = 180;
+const CENTER_MS = 420;
 
 export function DeviceCarousel({
   snapshot,
@@ -155,9 +167,12 @@ export function DeviceCarousel({
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef(new Map<string, HTMLDivElement>());
-  /** True while we programmatically center — don't fight scroll with selection sync. */
-  const programmaticScroll = useRef(false);
   const didMount = useRef(false);
+  /** Selection came from belt scroll — don't auto-center via the active effect. */
+  const fromBelt = useRef(false);
+  /** True while we ease scrollLeft — ignore selection sync / don't restart. */
+  const centering = useRef(false);
+  const centerRaf = useRef(0);
 
   const setSlideRef = useCallback((id: string, node: HTMLDivElement | null) => {
     if (node) slideRefs.current.set(id, node);
@@ -176,25 +191,72 @@ export function DeviceCarousel({
     [setPhoneModelId, setViewMode],
   );
 
-  // Sidebar / external selection → center active slide.
+  const cancelCenter = useCallback(() => {
+    if (centerRaf.current) {
+      cancelAnimationFrame(centerRaf.current);
+      centerRaf.current = 0;
+    }
+    centering.current = false;
+  }, []);
+
+  /** Ease a slide to center — never jumps. */
+  const scrollSlideToCenter = useCallback(
+    (deviceId: PreviewDeviceId, instant = false) => {
+      const viewport = viewportRef.current;
+      const slide = slideRefs.current.get(deviceId);
+      if (!viewport || !slide) return;
+
+      const left = targetScrollLeft(viewport, slide);
+      const from = viewport.scrollLeft;
+      if (Math.abs(from - left) < 1) return;
+
+      cancelCenter();
+
+      if (
+        instant ||
+        (typeof window !== "undefined" &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      ) {
+        viewport.scrollLeft = left;
+        return;
+      }
+
+      centering.current = true;
+      const dist = left - from;
+      const start = performance.now();
+
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / CENTER_MS);
+        viewport.scrollLeft = from + dist * easeOutCubic(t);
+        if (t < 1) {
+          centerRaf.current = requestAnimationFrame(step);
+        } else {
+          centerRaf.current = 0;
+          viewport.scrollLeft = left;
+          centering.current = false;
+        }
+      };
+      centerRaf.current = requestAnimationFrame(step);
+    },
+    [cancelCenter],
+  );
+
+  const scrollActiveToCenter = useCallback(
+    (instant = false) => scrollSlideToCenter(activeRef.current, instant),
+    [scrollSlideToCenter],
+  );
+
+  // Sidebar / click selection → ease to center. Belt scroll schedules its own ease.
   useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    const slide = slideRefs.current.get(active);
-    if (!viewport || !slide) return;
-
-    const behavior: ScrollBehavior = didMount.current ? "smooth" : "auto";
+    if (fromBelt.current) {
+      fromBelt.current = false;
+      return;
+    }
+    const instant = !didMount.current;
     didMount.current = true;
-    programmaticScroll.current = true;
-    centerSlide(viewport, slide, behavior);
-
-    const clear = window.setTimeout(
-      () => {
-        programmaticScroll.current = false;
-      },
-      behavior === "smooth" ? 450 : 50,
-    );
-    return () => window.clearTimeout(clear);
-  }, [active]);
+    const id = window.requestAnimationFrame(() => scrollActiveToCenter(instant));
+    return () => window.cancelAnimationFrame(id);
+  }, [active, scrollActiveToCenter]);
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -229,31 +291,46 @@ export function DeviceCarousel({
       return best?.id ?? null;
     };
 
-    const settleToNearest = () => {
-      if (programmaticScroll.current) return;
-      const id = nearest();
-      if (!id) return;
-      const slide = slideRefs.current.get(id);
-      if (slide) {
-        programmaticScroll.current = true;
-        centerSlide(viewport, slide, "smooth");
-        window.setTimeout(() => {
-          programmaticScroll.current = false;
-        }, 420);
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const clearIdle = () => {
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        idleTimer = null;
       }
-      if (id !== activeRef.current) select(id);
     };
 
-    let settleTimer: ReturnType<typeof setTimeout> | null = null;
+    /** Light-up: nearest device tracks the viewport center while you scroll. */
+    const syncSelection = () => {
+      if (centering.current) return;
+      const id = nearest();
+      if (!id || id === activeRef.current) return;
+      fromBelt.current = true; // don't center mid-scroll
+      select(id);
+    };
+
+    /** After the gesture stops: ease the lit-up (nearest) slide to center. */
+    const onScrollIdle = () => {
+      idleTimer = null;
+      if (centering.current) return;
+      const id = nearest() ?? activeRef.current;
+      if (id !== activeRef.current) {
+        fromBelt.current = true;
+        select(id);
+      }
+      scrollSlideToCenter(id, false);
+    };
+
+    const bumpIdle = () => {
+      if (centering.current) return;
+      clearIdle();
+      idleTimer = setTimeout(onScrollIdle, SCROLL_IDLE_MS);
+    };
+
     const onScroll = () => {
-      if (programmaticScroll.current) return;
-      if (settleTimer) clearTimeout(settleTimer);
-      settleTimer = setTimeout(settleToNearest, 120);
-    };
-
-    const onScrollEnd = () => {
-      if (settleTimer) clearTimeout(settleTimer);
-      settleToNearest();
+      if (centering.current) return;
+      syncSelection();
+      bumpIdle();
     };
 
     /**
@@ -273,14 +350,15 @@ export function DeviceCarousel({
 
       const delta = event.shiftKey ? dy || dx : dx;
       if (delta === 0) return;
-      // Ignore mostly-vertical gestures (keep feed / page vertical).
       if (!event.shiftKey && Math.abs(dy) > Math.abs(dx) * 1.25) return;
 
       event.preventDefault();
+      if (centering.current) cancelCenter();
       viewport.scrollLeft += delta;
+      syncSelection();
+      bumpIdle();
     };
 
-    // Horizontal drag to scrub; clicks still select.
     let pointerId: number | null = null;
     let startX = 0;
     let startScroll = 0;
@@ -292,10 +370,12 @@ export function DeviceCarousel({
       const t = event.target;
       if (
         t instanceof Element &&
-        t.closest("[data-capture-feed], button, a, [role='tab']")
+        t.closest("[data-capture-feed], [data-media-viewer], button, a, [role='tab']")
       ) {
         return;
       }
+      if (centering.current) cancelCenter();
+      clearIdle();
       pointerId = event.pointerId;
       startX = event.clientX;
       startScroll = viewport.scrollLeft;
@@ -311,6 +391,7 @@ export function DeviceCarousel({
         viewport.setPointerCapture(event.pointerId);
       }
       viewport.scrollLeft = startScroll - dist;
+      syncSelection();
     };
 
     const onPointerUp = (event: PointerEvent) => {
@@ -324,18 +405,22 @@ export function DeviceCarousel({
         /* ok */
       }
       if (wasDrag) {
-        settleToNearest();
+        syncSelection();
+        bumpIdle();
         return;
       }
       const el = document.elementFromPoint(event.clientX, event.clientY);
       const slide = el instanceof Element ? el.closest("[data-device-slide]") : null;
       const id = slide?.getAttribute("data-device-slide") as PreviewDeviceId | null;
-      if (id && id !== activeRef.current) select(id);
+      if (id && id !== activeRef.current) {
+        fromBelt.current = false; // layout effect eases to center
+        select(id);
+      } else if (id) {
+        scrollActiveToCenter(false);
+      }
     };
 
     viewport.addEventListener("scroll", onScroll, { passive: true });
-    viewport.addEventListener("scrollend", onScrollEnd);
-    // capture so trackpad wheel reaches us even over nested preview nodes
     viewport.addEventListener("wheel", onWheel, { passive: false, capture: true });
     viewport.addEventListener("pointerdown", onPointerDown);
     viewport.addEventListener("pointermove", onPointerMove);
@@ -344,15 +429,15 @@ export function DeviceCarousel({
 
     return () => {
       viewport.removeEventListener("scroll", onScroll);
-      viewport.removeEventListener("scrollend", onScrollEnd);
       viewport.removeEventListener("wheel", onWheel, true);
       viewport.removeEventListener("pointerdown", onPointerDown);
       viewport.removeEventListener("pointermove", onPointerMove);
       viewport.removeEventListener("pointerup", onPointerUp);
       viewport.removeEventListener("pointercancel", onPointerUp);
-      if (settleTimer) clearTimeout(settleTimer);
+      clearIdle();
+      cancelCenter();
     };
-  }, [select, devices]);
+  }, [select, devices, scrollActiveToCenter, scrollSlideToCenter, cancelCenter]);
 
   return (
     <div

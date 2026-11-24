@@ -17,7 +17,16 @@ async function cacheRef(image: ImageRef, id: string): Promise<ImageRef> {
 
 async function cacheMediaList(media: PublishedMedia[]): Promise<PublishedMedia[]> {
   return Promise.all(
-    media.map(async (m) => ({ ...m, image: await cacheRef(m.image, `media-${m.id}`) })),
+    media.map(async (m) => {
+      const image = await cacheRef(m.image, `media-${m.id}`);
+      const slides =
+        m.slides?.length ?
+          await Promise.all(
+            m.slides.map((slide, i) => cacheRef(slide, `media-${m.id}-slide-${i}`)),
+          )
+        : undefined;
+      return { ...m, image, slides };
+    }),
   );
 }
 

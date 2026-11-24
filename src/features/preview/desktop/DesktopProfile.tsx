@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ProfileSnapshot } from "@/features/import/types";
 import { displayPostCount, mergeGrid } from "@/features/planner/mergeGrid";
-import type { PlannedItem, PreviewTab } from "@/features/planner/types";
+import type { GridItem, PlannedItem, PreviewTab } from "@/features/planner/types";
 import { Highlights } from "../Highlights";
 import {
   CreateIcon,
@@ -16,6 +16,7 @@ import {
   VerifiedBadge,
 } from "../icons";
 import "../ig.css";
+import { MediaViewer } from "../MediaViewer";
 import { ProfileGrid } from "../ProfileGrid";
 import { ProfileTabs } from "../ProfileTabs";
 import { SharedImage } from "../SharedImage";
@@ -45,6 +46,9 @@ export function DesktopProfile({
   const posts = displayPostCount(f.posts.value, planned.length);
   const stageRef = useRef<HTMLDivElement>(null);
   const [wide, setWide] = useState(false);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const openIndex = openId ? items.findIndex((i) => i.id === openId) : -1;
+  const openItem = (item: GridItem) => setOpenId(item.id);
 
   useEffect(() => {
     const el = stageRef.current;
@@ -158,9 +162,21 @@ export function DesktopProfile({
             editMode={editMode}
             variant={tab === "reels" ? "reels" : "posts"}
             desktop
+            onOpenItem={openItem}
           />
         </div>
       </div>
+
+      {openIndex >= 0 ?
+        <MediaViewer
+          items={items}
+          index={openIndex}
+          snapshot={snapshot}
+          layout="desktop"
+          onIndexChange={(i) => setOpenId(items[i]?.id ?? null)}
+          onClose={() => setOpenId(null)}
+        />
+      : null}
     </div>
   );
 

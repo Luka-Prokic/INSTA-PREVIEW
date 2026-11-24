@@ -19,6 +19,8 @@ export type PublishedMedia = {
   id: string;
   kind: MediaKind;
   image: ImageRef;
+  /** Carousel pages (cover is image / slides[0]). */
+  slides?: ImageRef[];
   width?: number;
   height?: number;
   permalink?: string;

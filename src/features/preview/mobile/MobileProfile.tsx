@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { ProfileSnapshot } from "@/features/import/types";
 import { displayPostCount, mergeGrid } from "@/features/planner/mergeGrid";
-import type { PlannedItem, PreviewTab } from "@/features/planner/types";
+import type { GridItem, PlannedItem, PreviewTab } from "@/features/planner/types";
 import {
   FEATURED_PHONE_MODEL_ID,
   getPhoneModel,
@@ -25,6 +25,7 @@ import {
   VerifiedBadge,
 } from "../icons";
 import "../ig.css";
+import { MediaViewer } from "../MediaViewer";
 import { ProfileGrid } from "../ProfileGrid";
 import { ProfileTabs } from "../ProfileTabs";
 import { SharedImage } from "../SharedImage";
@@ -56,6 +57,10 @@ function ProfileChrome({
   const f = snapshot.fields;
   const items = mergeGrid(f.media.value, planned, tab, gridOrder);
   const posts = displayPostCount(f.posts.value, planned.length);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const openIndex = openId ? items.findIndex((i) => i.id === openId) : -1;
+
+  const openItem = (item: GridItem) => setOpenId(item.id);
 
   return (
     <>
@@ -123,7 +128,12 @@ function ProfileChrome({
         : null}
 
         <ProfileTabs active={tab} onChange={onTabChange} iconOnly />
-        <ProfileGrid items={items} editMode={editMode} variant={tab === "reels" ? "reels" : "posts"} />
+        <ProfileGrid
+          items={items}
+          editMode={editMode}
+          variant={tab === "reels" ? "reels" : "posts"}
+          onOpenItem={openItem}
+        />
       </div>
 
       <nav className={styles.bottomNav} aria-label="Instagram navigation">
@@ -137,6 +147,20 @@ function ProfileChrome({
         <div className={styles.homeIndicator}>
           <div className={styles.homePill} />
         </div>
+      : null}
+
+      {openIndex >= 0 ?
+        <MediaViewer
+          items={items}
+          index={openIndex}
+          snapshot={snapshot}
+          layout="mobile"
+          statusBarH={statusBarH}
+          face={face}
+          homeIndicator={homeIndicator}
+          onIndexChange={(i) => setOpenId(items[i]?.id ?? null)}
+          onClose={() => setOpenId(null)}
+        />
       : null}
     </>
   );

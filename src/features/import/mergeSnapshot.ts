@@ -86,7 +86,9 @@ export function applyManual(snapshot: ProfileSnapshot, manual: ManualOverrides):
         return kind && kind !== m.kind ? { ...m, kind } : m;
       });
     }
-    if (manual.pinnedIds) {
+    // `pinnedIds` may also list planned item ids (pin FIFO order) — only published
+    // rows in this list are affected; unknown ids are ignored.
+    if (manual.pinnedIds !== undefined) {
       const pinned = new Set(manual.pinnedIds);
       list = list.map((m) => ({ ...m, pinned: pinned.has(m.id) }));
     }

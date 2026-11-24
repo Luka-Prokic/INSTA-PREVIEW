@@ -118,6 +118,18 @@ function isPinned(node: Json): boolean {
   return Array.isArray(a) && a.length > 0;
 }
 
+function carouselSlides(node: Json): PublishedMedia["slides"] {
+  const raw = node.carousel_media;
+  if (!Array.isArray(raw) || raw.length < 2) return undefined;
+  const slides: NonNullable<PublishedMedia["slides"]> = [];
+  for (const child of raw) {
+    if (!isObj(child)) continue;
+    const img = pickImage(child);
+    if (img) slides.push({ kind: "remote", url: img.url });
+  }
+  return slides.length > 1 ? slides : undefined;
+}
+
 function mediaFromNode(node: Json): PublishedMedia | undefined {
   const image = pickImage(node);
   const code = str(node.code) ?? str(node.shortcode);
@@ -125,10 +137,12 @@ function mediaFromNode(node: Json): PublishedMedia | undefined {
   if (!image || !id) return undefined;
   const kind = mediaKindOf(node);
   const path = kind === "reel" ? "reel" : "p";
+  const slides = kind === "carousel" ? carouselSlides(node) : undefined;
   return {
     id,
     kind,
     image: { kind: "remote", url: image.url },
+    slides,
     width: image.width,
     height: image.height,
     permalink: code ? `https://www.instagram.com/${path}/${code}/` : undefined,

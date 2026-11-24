@@ -9,11 +9,13 @@ export function ProfileGrid({
   editMode,
   variant = "posts",
   desktop = false,
+  onOpenItem,
 }: {
   items: GridItem[];
   editMode: boolean;
   variant?: "posts" | "reels";
   desktop?: boolean;
+  onOpenItem?: (item: GridItem) => void;
 }) {
   if (items.length === 0) {
     return (
@@ -31,7 +33,13 @@ export function ProfileGrid({
   return (
     <div className={[styles.grid, desktop ? styles.gridDesktop : ""].filter(Boolean).join(" ")}>
       {items.map((item) => (
-        <GridTile key={item.id} item={item} editMode={editMode} variant={variant} />
+        <GridTile
+          key={item.id}
+          item={item}
+          editMode={editMode}
+          variant={variant}
+          onOpen={onOpenItem}
+        />
       ))}
     </div>
   );

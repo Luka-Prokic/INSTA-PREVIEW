@@ -80,10 +80,19 @@ export function normalizeGraph(me: GraphMe, media: GraphMedia[] | null): Adapter
       if (m.media_product_type === "STORY" || m.media_product_type === "AD") continue;
       const url = coverUrl(m);
       if (!url) continue;
+      const kind = mediaKind(m);
+      const childUrls =
+        kind === "carousel" ?
+          (m.children?.data ?? [])
+            .map((c) => c.thumbnail_url ?? c.media_url)
+            .filter((u): u is string => Boolean(u))
+        : [];
       items.push({
         id: m.id,
-        kind: mediaKind(m),
+        kind,
         image: { kind: "remote", url },
+        slides:
+          childUrls.length > 1 ? childUrls.map((u) => ({ kind: "remote" as const, url: u })) : undefined,
         permalink: m.permalink,
         timestamp: m.timestamp,
       });

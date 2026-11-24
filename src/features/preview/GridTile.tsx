@@ -11,14 +11,17 @@ export function GridTile({
   item,
   editMode,
   variant = "posts",
+  onOpen,
 }: {
   item: GridItem;
   editMode: boolean;
   variant?: "posts" | "reels";
+  onOpen?: (item: GridItem) => void;
 }) {
   const showPlanned = editMode && item.source === "planned";
   return (
-    <div
+    <button
+      type="button"
       className={[
         styles.tile,
         variant === "reels" ? styles.tileReels : "",
@@ -26,6 +29,12 @@ export function GridTile({
       ]
         .filter(Boolean)
         .join(" ")}
+      onClick={() => onOpen?.(item)}
+      aria-label={
+        item.kind === "reel" || item.kind === "video" ? "Open Reel"
+        : item.kind === "carousel" ? "Open carousel"
+        : "Open post"
+      }
     >
       <SharedImage
         image={item.image}
@@ -56,6 +65,6 @@ export function GridTile({
         </span>
       : null}
       {showPlanned ? <span className={styles.plannedTag}>Planned</span> : null}
-    </div>
+    </button>
   );
 }
