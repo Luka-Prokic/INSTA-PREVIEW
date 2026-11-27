@@ -289,6 +289,17 @@
   height: 36px;
   border-radius: 10px;
   overflow: hidden;
+  flex: 0 0 auto;
+  transition:
+    background-color var(--t-focus) var(--ease-focus),
+    color var(--t-focus) var(--ease-focus);
+}
+
+.railSwap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
 }
 
 .railAdd :global(.adminIcon) {
@@ -296,18 +307,30 @@
   height: 36px;
 }
 
+/* Dragging a rail post → trash; after drop → confirm X. Same box, new color/icon. */
+.railAdd[data-mode="trash"],
+.railAdd[data-mode="confirm"] {
+  background: var(--admin-red);
+  color: #fff;
+}
+
+.railAdd[data-mode="trash"][data-over] {
+  background: color-mix(in srgb, var(--admin-red) 82%, #000);
+}
+
+.railAdd[data-mode="trash"] :global(.adminIcon),
+.railAdd[data-mode="confirm"] :global(.adminIcon) {
+  width: 20px;
+  height: 20px;
+}
+
 .railContent {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-}
-
-.railContent::-webkit-scrollbar {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .phoneDot {

@@ -1,0 +1,44 @@
+.file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+.dropOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 24px;
+  background: color-mix(in srgb, var(--color-paper) 78%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px dashed color-mix(in srgb, var(--color-ink) 35%, transparent);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.dropTitle {
+  margin: 0;
+  font: 700 22px/28px var(--font-sans);
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+}
+
+.dropHint {
+  margin: 0;
+  font: 500 14px/18px var(--font-sans);
+  color: color-mix(in srgb, var(--color-ink) 65%, transparent);
+}

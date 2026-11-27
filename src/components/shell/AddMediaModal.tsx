@@ -17,9 +17,12 @@ type Kind = PlannedItem["kind"];
 export function AddMediaModal({
   open,
   onOpenChange,
+  seed = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** File already chosen (picker / app-wide drop) — skip the empty upload step. */
+  seed?: { file: File; kindHint?: Kind } | null;
 }) {
   const { addPlanned } = useWorkspace();
   const presence = usePresence(open);
@@ -38,6 +41,7 @@ export function AddMediaModal({
   const drag = useRef<{ x: number; y: number; fx: number; fy: number } | null>(null);
   const previewUrlRef = useRef<string | null>(null);
   previewUrlRef.current = previewUrl;
+  const seedHandled = useRef<File | null>(null);
 
   useEffect(() => {
     if (presence.mounted) return;
@@ -51,6 +55,7 @@ export function AddMediaModal({
     setKind("image");
     setDrop(false);
     setError(null);
+    seedHandled.current = null;
   }, [presence.mounted]);
 
   useEffect(() => {
@@ -78,7 +83,7 @@ export function AddMediaModal({
     setError(null);
   };
 
-  const onFile = useCallback(async (file: File | null | undefined) => {
+  const onFile = useCallback(async (file: File | null | undefined, kindHint?: Kind) => {
     if (!file) return;
     setBusy(true);
     setError(null);
@@ -88,12 +93,13 @@ export function AddMediaModal({
         setPreviewUrl(frame.url);
         setBlob(frame.blob);
         setName(file.name);
-        setKind("reel");
+        setKind(kindHint ?? "reel");
       } else if (file.type.startsWith("image/")) {
         const image = await loadImageFile(file);
         setPreviewUrl(image.url);
         setBlob(file);
         setName(file.name);
+        setKind(kindHint ?? "image");
       } else {
         setError("Use an image or video file.");
       }
@@ -104,6 +110,14 @@ export function AddMediaModal({
       setDrop(false);
     }
   }, []);
+
+  // Seed from picker / whole-app drop — load as soon as the dialog mounts.
+  useEffect(() => {
+    if (!presence.mounted || !seed?.file) return;
+    if (seedHandled.current === seed.file) return;
+    seedHandled.current = seed.file;
+    void onFile(seed.file, seed.kindHint);
+  }, [presence.mounted, seed, onFile]);
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);

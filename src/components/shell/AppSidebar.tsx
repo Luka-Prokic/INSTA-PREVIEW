@@ -3,8 +3,8 @@
 import { IonIcon } from "@/lib/caka-admin";
 import { useEffect, useState } from "react";
 import { useWorkspace } from "@/features/planner/store";
-import { AddMediaModal } from "./AddMediaModal";
 import { ManualImportModal } from "./ManualImportModal";
+import { useMediaIntake } from "./MediaIntake";
 import { AddPostIcon, MenuEqualsIcon } from "./PlanIcons";
 import { FlipToggle } from "./FlipToggle";
 import { PhoneControls } from "./PhoneControls";
@@ -29,7 +29,7 @@ export function AppSidebar() {
     editMode,
     setEditMode,
   } = useWorkspace();
-  const [addOpen, setAddOpen] = useState(false);
+  const { openAddPicker } = useMediaIntake();
   const [clearArmed, setClearArmed] = useState(false);
   const contentCount = (snapshot?.fields.media.value?.length ?? 0) + planned.length;
   const contentEmpty = contentCount === 0;
@@ -61,19 +61,21 @@ export function AppSidebar() {
             <button type="button" className={sideStyles.railIcon} aria-label="Expand sidebar" onClick={() => setSidebarOpen(true)}>
               <MenuEqualsIcon />
             </button>
-            <button
-              type="button"
-              className={`${sideStyles.railIcon} ${sideStyles.railAdd}`}
-              aria-label="Add content"
-              disabled={!snapshot}
-              onClick={() => setAddOpen(true)}
-            >
-              <AddPostIcon />
-            </button>
+            {contentEmpty ?
+              <button
+                type="button"
+                className={`${sideStyles.railIcon} ${sideStyles.railAdd}`}
+                aria-label="Add content"
+                disabled={!snapshot}
+                onClick={openAddPicker}
+              >
+                <AddPostIcon />
+              </button>
+            : null}
           </div>
           {!contentEmpty ?
             <div className={sideStyles.railContent}>
-              <PlannedList variant="rail" />
+              <PlannedList variant="rail" onAdd={openAddPicker} />
             </div>
           : null}
         </div>
@@ -132,7 +134,7 @@ export function AppSidebar() {
               <SidebarSection title="Plan">
                 <ul className={styles.card}>
                   <li>
-                    <button type="button" className={styles.row} disabled={!snapshot} onClick={() => setAddOpen(true)}>
+                    <button type="button" className={styles.row} disabled={!snapshot} onClick={openAddPicker}>
                       <span className={styles.rowLabel}>
                         <AddPostIcon />
                         Add
@@ -178,7 +180,6 @@ export function AppSidebar() {
         </div>
       </div>
 
-      <AddMediaModal open={addOpen} onOpenChange={setAddOpen} />
       <ManualImportModal open={profileEditOpen} onOpenChange={setProfileEditOpen} />
     </aside>
   );

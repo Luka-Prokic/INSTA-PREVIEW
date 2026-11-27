@@ -16,6 +16,44 @@ export function MenuEqualsIcon() {
   );
 }
 
+/** Ionicons trash-outline (MIT) — rail delete drop target. */
+export function TrashIcon() {
+  return (
+    <svg
+      className="adminIcon"
+      viewBox="0 0 512 512"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="32"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M112 112l20 320c1.1 17.4 14.9 32 32.2 32h183.6c17.3 0 31.1-14.6 32.2-32l20-320" />
+      <path d="M80 112h352" />
+      <path d="M192 112V72h128v40M200 208v160M256 208v160M312 208v160" />
+    </svg>
+  );
+}
+
+/** Ionicons remove-outline — second-step remove confirm. */
+export function RemoveIcon() {
+  return (
+    <svg
+      className="adminIcon"
+      viewBox="0 0 512 512"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="32"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M400 256H112" />
+    </svg>
+  );
+}
+
 /** Instagram-style create marks: filled post square with a + cutout (bg shows through). */
 
 export function AddPostIcon() {

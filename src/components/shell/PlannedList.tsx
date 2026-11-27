@@ -4,8 +4,11 @@ import {
   DndContext,
   PointerSensor,
   closestCenter,
+  pointerWithin,
+  useDroppable,
   useSensor,
   useSensors,
+  type CollisionDetection,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
@@ -21,10 +24,28 @@ import { SharedImage } from "@/features/preview/SharedImage";
 import { mergeGrid } from "@/features/planner/mergeGrid";
 import type { GridItem, PlannedKind } from "@/features/planner/types";
 import { useWorkspace } from "@/features/planner/store";
-import { useCallback, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
+import { AddPostIcon, RemoveIcon, TrashIcon } from "./PlanIcons";
 import { PopupMenu, popupMenuStyles as pop, type PopupAnchor } from "./PopupMenu";
+import sideStyles from "./AppSidebar.module.css";
 import styles from "./PlannedList.module.css";
 import shell from "./Shell.module.css";
+
+const RAIL_TRASH_ID = "__rail-trash__";
+
+const railCollision: CollisionDetection = (args) => {
+  const hits = pointerWithin(args);
+  const trash = hits.find((hit) => hit.id === RAIL_TRASH_ID);
+  if (trash) return [trash];
+  return closestCenter(args).filter((hit) => hit.id !== RAIL_TRASH_ID);
+};
 
 const KIND_OPTIONS: { value: PlannedKind; label: string }[] = [
   { value: "image", label: "Post" },
@@ -144,6 +165,66 @@ function SortableRailTile({ item }: { item: GridItem }) {
   );
 }
 
+/** Add square ↔ trash while dragging ↔ X after drop (confirm remove). */
+function RailAddTrash({
+  onAdd,
+  dragging,
+  pendingId,
+  onConfirmRemove,
+  onClearPending,
+}: {
+  onAdd: () => void;
+  dragging: boolean;
+  pendingId: string | null;
+  onConfirmRemove: () => void;
+  onClearPending: () => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: RAIL_TRASH_ID });
+  const mode = pendingId ? "confirm" : dragging ? "trash" : "add";
+
+  useEffect(() => {
+    if (!pendingId) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClearPending();
+    };
+    window.addEventListener("keydown", onKey);
+    const timer = window.setTimeout(onClearPending, 4000);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.clearTimeout(timer);
+    };
+  }, [pendingId, onClearPending]);
+
+  return (
+    <button
+      ref={setNodeRef}
+      type="button"
+      className={`${sideStyles.railIcon} ${sideStyles.railAdd}`}
+      data-mode={mode}
+      data-over={(dragging && isOver) || undefined}
+      aria-label={
+        mode === "confirm" ? "Confirm remove" : mode === "trash" ? "Drop to remove" : "Add content"
+      }
+      onClick={() => {
+        if (mode === "confirm") {
+          onConfirmRemove();
+          return;
+        }
+        if (mode === "trash") return;
+        onAdd();
+      }}
+    >
+      <span key={mode} className={`${shell.swap} ${sideStyles.railSwap}`}>
+        {mode === "confirm" ?
+          <RemoveIcon />
+        : mode === "trash" ?
+          <TrashIcon />
+        : <AddPostIcon />}
+      </span>
+    </button>
+  );
+}
+
 function ItemOptionsMenu({
   item,
   open,
@@ -209,8 +290,15 @@ function ItemOptionsMenu({
 }
 
 /** Sidebar Content list — full DnD; order drives the preview grid. */
-export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" }) {
-  const { planned, snapshot, gridOrder, reorderGrid } = useWorkspace();
+export function PlannedList({
+  variant = "list",
+  onAdd,
+}: {
+  variant?: "list" | "rail";
+  /** Rail only — add picker when the square isn’t in trash/confirm mode. */
+  onAdd?: () => void;
+}) {
+  const { planned, snapshot, gridOrder, reorderGrid, removeGridItem } = useWorkspace();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
   const items = mergeGrid(snapshot?.fields.media.value, planned, "posts", gridOrder);
   const plannedNames = new Map(planned.map((p) => [p.id, p.name]));
@@ -218,10 +306,26 @@ export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" })
   usePointerTilt(listRef, { tilt: `.${styles.item}` });
 
   const [menu, setMenu] = useState<MenuState | null>(null);
+  const [railDragging, setRailDragging] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const skipClick = useRef(false);
   const menuItem = menu ? items.find((i) => i.id === menu.id) : undefined;
 
   const closeMenu = useCallback(() => setMenu(null), []);
+  const clearPending = useCallback(() => setPendingDeleteId(null), []);
+
+  const confirmPending = useCallback(() => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
+    void removeGridItem(id);
+  }, [pendingDeleteId, removeGridItem]);
+
+  useEffect(() => {
+    if (pendingDeleteId && !items.some((i) => i.id === pendingDeleteId)) {
+      setPendingDeleteId(null);
+    }
+  }, [items, pendingDeleteId]);
 
   const openMenu = useCallback((id: string, rect: DOMRect) => {
     if (skipClick.current) {
@@ -246,6 +350,10 @@ export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" })
   const onDragStart = (_event: DragStartEvent) => {
     skipClick.current = true;
     setMenu(null);
+    if (variant === "rail") {
+      setPendingDeleteId(null);
+      setRailDragging(true);
+    }
   };
 
   const onDragEnd = (event: DragEndEvent) => {
@@ -253,10 +361,19 @@ export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" })
     window.setTimeout(() => {
       skipClick.current = false;
     }, 0);
+    setRailDragging(false);
+
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    if (!over) return;
     const activeId = String(active.id);
     const overId = String(over.id);
+
+    if (variant === "rail" && overId === RAIL_TRASH_ID) {
+      setPendingDeleteId(activeId);
+      return;
+    }
+
+    if (active.id === over.id) return;
     const activeItem = items.find((i) => i.id === activeId);
     const overItem = items.find((i) => i.id === overId);
     if (!activeItem || !overItem) return;
@@ -277,27 +394,41 @@ export function PlannedList({ variant = "list" }: { variant?: "list" | "rail" })
     reorderGrid([...pinnedIds, ...arrayMove(restIds, oldIndex, newIndex)]);
   };
 
+  const onDragCancel = () => {
+    skipClick.current = true;
+    window.setTimeout(() => {
+      skipClick.current = false;
+    }, 0);
+    setRailDragging(false);
+  };
+
   return (
     <>
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={variant === "rail" ? railCollision : closestCenter}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
-        onDragCancel={() => {
-          skipClick.current = true;
-          window.setTimeout(() => {
-            skipClick.current = false;
-          }, 0);
-        }}
+        onDragCancel={onDragCancel}
       >
         <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
           {variant === "rail" ?
-            <ul className={styles.railList} aria-label="Content order">
-              {items.map((item) => (
-                <SortableRailTile key={item.id} item={item} />
-              ))}
-            </ul>
+            <div className={styles.railColumn}>
+              {onAdd ?
+                <RailAddTrash
+                  onAdd={onAdd}
+                  dragging={railDragging}
+                  pendingId={pendingDeleteId}
+                  onConfirmRemove={confirmPending}
+                  onClearPending={clearPending}
+                />
+              : null}
+              <ul className={styles.railList} aria-label="Content order">
+                {items.map((item) => (
+                  <SortableRailTile key={item.id} item={item} />
+                ))}
+              </ul>
+            </div>
           : <ul ref={listRef} className={styles.list} aria-label="Content order">
               {items.map((item) => (
                 <SortableRow
